@@ -82,7 +82,6 @@ export async function fetchAllData(forceRefresh = false): Promise<{
       };
     })
     .filter((r) => {
-      // Only consider reviews that have an actual rating OR comments written by the user
       const hasRating = r.rating !== null && r.rating > 0;
       const hasShort = r.shortComment.trim().length > 0;
       const hasDetail = r.detailComment.trim().length > 0;
@@ -126,7 +125,6 @@ export async function fetchAllData(forceRefresh = false): Promise<{
           )
         : 0;
 
-    // Calculate revisit rate based ONLY on users who actually wrote a review
     const revisitCount = restReviews.filter((r) => r.revisit).length;
     const revisitRate =
       restReviews.length > 0
@@ -341,6 +339,107 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
     shortComment: input.shortComment || "",
     detailComment: input.detailComment || "",
     recommendedMenu: input.recommendedMenu || "",
+    revisit: Boolean(input.revisit),
+    url: response.url,
+  };
+}
+
+export async function updateReview(
+  reviewId: string,
+  input: {
+    restaurantId?: string;
+    author?: string;
+    visitDate?: string;
+    rating?: number;
+    shortComment?: string;
+    detailComment?: string;
+    recommendedMenu?: string;
+    revisit?: boolean;
+  }
+): Promise<Review> {
+  const properties: any = {};
+
+  if (input.author) {
+    properties["작성자"] = {
+      select: {
+        name: input.author,
+      },
+    };
+  }
+
+  if (input.visitDate) {
+    properties["방문일"] = {
+      date: {
+        start: input.visitDate,
+      },
+    };
+  }
+
+  if (typeof input.rating === "number") {
+    properties["별점"] = {
+      number: input.rating,
+    };
+  }
+
+  if (input.shortComment !== undefined) {
+    properties["한줄평"] = {
+      rich_text: [
+        {
+          text: {
+            content: input.shortComment,
+          },
+        },
+      ],
+    };
+  }
+
+  if (input.detailComment !== undefined) {
+    properties["상세 평론"] = {
+      rich_text: [
+        {
+          text: {
+            content: input.detailComment,
+          },
+        },
+      ],
+    };
+  }
+
+  if (input.recommendedMenu !== undefined) {
+    properties["추천 메뉴"] = {
+      rich_text: [
+        {
+          text: {
+            content: input.recommendedMenu,
+          },
+        },
+      ],
+    };
+  }
+
+  if (input.revisit !== undefined) {
+    properties["재방문?"] = {
+      checkbox: Boolean(input.revisit),
+    };
+  }
+
+  const response: any = await notion.pages.update({
+    page_id: reviewId,
+    properties,
+  });
+
+  invalidateCache();
+
+  return {
+    id: response.id,
+    title: response.properties["제목"]?.title?.[0]?.plain_text || "",
+    restaurantId: input.restaurantId || "",
+    author: input.author || response.properties["작성자"]?.select?.name || "",
+    visitDate: input.visitDate || response.properties["방문일"]?.date?.start || null,
+    rating: input.rating ?? response.properties["별점"]?.number ?? null,
+    shortComment: input.shortComment ?? "",
+    detailComment: input.detailComment ?? "",
+    recommendedMenu: input.recommendedMenu ?? "",
     revisit: Boolean(input.revisit),
     url: response.url,
   };

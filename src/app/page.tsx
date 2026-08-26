@@ -7,6 +7,7 @@ import RestaurantCard from "@/components/RestaurantCard";
 import RestaurantDetailModal from "@/components/RestaurantDetailModal";
 import AddRestaurantModal from "@/components/AddRestaurantModal";
 import AddReviewModal from "@/components/AddReviewModal";
+import EditReviewModal from "@/components/EditReviewModal";
 import StatsView from "@/components/StatsView";
 import PatchNotesView from "@/components/PatchNotesView";
 import { Restaurant, Review } from "@/types";
@@ -40,6 +41,11 @@ export default function HomePage() {
     useState<Restaurant | null>(null);
   const [isAddRestaurantOpen, setIsAddRestaurantOpen] = useState(false);
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
+  const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
+  const [editingReviewData, setEditingReviewData] = useState<{
+    review: Review;
+    restaurantName: string;
+  } | null>(null);
   const [reviewTargetRestaurantId, setReviewTargetRestaurantId] = useState<string | undefined>(
     undefined
   );
@@ -108,6 +114,11 @@ export default function HomePage() {
     setIsAddReviewOpen(true);
   };
 
+  const handleOpenEditReview = (review: Review, restaurantName: string) => {
+    setEditingReviewData({ review, restaurantName });
+    setIsEditReviewOpen(true);
+  };
+
   const handleRestaurantCreated = (newRest: Restaurant, openReview: boolean) => {
     setIsAddRestaurantOpen(false);
     showToast(`"${newRest.name}" 등록 완료! 🎉`);
@@ -125,7 +136,6 @@ export default function HomePage() {
     showToast(`${newReview.author}님의 평론이 등록되었습니다! 🌟`);
     fetchRestaurants(true);
 
-    // If detail modal was open for this restaurant, update it
     if (selectedRestaurantForDetail && selectedRestaurantForDetail.id === newReview.restaurantId) {
       setSelectedRestaurantForDetail((prev) => {
         if (!prev) return null;
@@ -133,6 +143,24 @@ export default function HomePage() {
           ...prev,
           reviews: [newReview, ...prev.reviews],
           reviewCount: prev.reviewCount + 1,
+        };
+      });
+    }
+  };
+
+  const handleReviewUpdated = (updatedReview: Review) => {
+    setIsEditReviewOpen(false);
+    showToast(`${updatedReview.author}님의 평론이 수정되었습니다! ✏️`);
+    fetchRestaurants(true);
+
+    if (selectedRestaurantForDetail) {
+      setSelectedRestaurantForDetail((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          reviews: prev.reviews.map((r) =>
+            r.id === updatedReview.id ? updatedReview : r
+          ),
         };
       });
     }
@@ -389,6 +417,7 @@ export default function HomePage() {
         restaurant={selectedRestaurantForDetail}
         onClose={() => setSelectedRestaurantForDetail(null)}
         onOpenAddReview={handleOpenAddReview}
+        onOpenEditReview={handleOpenEditReview}
       />
 
       <AddRestaurantModal
@@ -404,6 +433,14 @@ export default function HomePage() {
         initialRestaurantId={reviewTargetRestaurantId}
         defaultAuthor={currentUser}
         onSuccess={handleReviewCreated}
+      />
+
+      <EditReviewModal
+        isOpen={isEditReviewOpen}
+        onClose={() => setIsEditReviewOpen(false)}
+        review={editingReviewData?.review || null}
+        restaurantName={editingReviewData?.restaurantName}
+        onSuccess={handleReviewUpdated}
       />
     </div>
   );

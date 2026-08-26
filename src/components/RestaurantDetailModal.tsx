@@ -1,13 +1,14 @@
 "use client";
 
 import React from "react";
-import { X, Star, Building2, Calendar, ThumbsUp, ThumbsDown, PenSquare, ExternalLink, Utensils } from "lucide-react";
+import { X, Star, Building2, Calendar, ThumbsUp, ThumbsDown, PenSquare, ExternalLink, Utensils, Edit3 } from "lucide-react";
 import { Restaurant, Review } from "@/types";
 
 interface RestaurantDetailModalProps {
   restaurant: Restaurant | null;
   onClose: () => void;
   onOpenAddReview: (restaurantId: string) => void;
+  onOpenEditReview: (review: Review, restaurantName: string) => void;
 }
 
 const AUTHOR_COLORS: Record<string, { bg: string; text: string; ring: string }> = {
@@ -21,6 +22,7 @@ export default function RestaurantDetailModal({
   restaurant,
   onClose,
   onOpenAddReview,
+  onOpenEditReview,
 }: RestaurantDetailModalProps) {
   if (!restaurant) return null;
 
@@ -145,9 +147,9 @@ export default function RestaurantDetailModal({
               return (
                 <div
                   key={review.id}
-                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-orange-200 dark:hover:border-orange-900 transition"
+                  className="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-orange-200 dark:hover:border-orange-900 transition relative"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     {/* Author Avatar & Name */}
                     <div className="flex items-center space-x-3">
                       <div
@@ -187,26 +189,40 @@ export default function RestaurantDetailModal({
                       </div>
                     </div>
 
-                    {/* Revisit Tag */}
-                    <span
-                      className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold ${
-                        review.revisit
-                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                          : "bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600"
-                      }`}
-                    >
-                      {review.revisit ? (
-                        <>
-                          <ThumbsUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                          <span>재방문 의사 있음</span>
-                        </>
-                      ) : (
-                        <>
-                          <ThumbsDown className="w-3 h-3 text-slate-400 dark:text-slate-500" />
-                          <span>재방문 미정</span>
-                        </>
-                      )}
-                    </span>
+                    {/* Revisit Tag & Edit Button */}
+                    <div className="flex items-center space-x-2">
+                      <span
+                        className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+                          review.revisit
+                            ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                            : "bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600"
+                        }`}
+                      >
+                        {review.revisit ? (
+                          <>
+                            <ThumbsUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                            <span className="hidden sm:inline">재방문 의사 있음</span>
+                            <span className="sm:hidden">재방문</span>
+                          </>
+                        ) : (
+                          <>
+                            <ThumbsDown className="w-3 h-3 text-slate-400" />
+                            <span className="hidden sm:inline">재방문 미정</span>
+                            <span className="sm:hidden">미정</span>
+                          </>
+                        )}
+                      </span>
+
+                      {/* Edit Review Button */}
+                      <button
+                        onClick={() => onOpenEditReview(review, restaurant.name)}
+                        title="평론 수정하기"
+                        className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-600 transition"
+                      >
+                        <Edit3 className="w-3 h-3" />
+                        <span>수정</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* One Line Comment */}

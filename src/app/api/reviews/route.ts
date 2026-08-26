@@ -1,5 +1,5 @@
-﻿import { NextResponse } from "next/server";
-import { fetchAllData, createReview } from "@/lib/notion";
+import { NextResponse } from "next/server";
+import { fetchAllData, createReview, updateReview } from "@/lib/notion";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +57,37 @@ export async function POST(req: Request) {
     console.error("POST /api/reviews error:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to create review" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    if (!body.reviewId) {
+      return NextResponse.json(
+        { success: false, error: "수정할 평론 ID가 필요합니다." },
+        { status: 400 }
+      );
+    }
+
+    const updated = await updateReview(body.reviewId, {
+      restaurantId: body.restaurantId,
+      author: body.author,
+      visitDate: body.visitDate,
+      rating: typeof body.rating === "number" ? body.rating : undefined,
+      shortComment: body.shortComment,
+      detailComment: body.detailComment,
+      recommendedMenu: body.recommendedMenu,
+      revisit: typeof body.revisit === "boolean" ? body.revisit : undefined,
+    });
+
+    return NextResponse.json({ success: true, data: updated });
+  } catch (error: any) {
+    console.error("PUT /api/reviews error:", error);
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to update review" },
       { status: 500 }
     );
   }

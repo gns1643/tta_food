@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon, Target } from "lucide-react";
+import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon, Edit3 } from "lucide-react";
 
 interface PatchItem {
   version: string;
@@ -17,6 +17,21 @@ interface PatchItem {
 }
 
 const PATCH_HISTORY: PatchItem[] = [
+  {
+    version: "v1.4.0",
+    date: "2026년 8월 26일",
+    title: "평론 수정 기능 추가 ✏️",
+    tag: "기능 추가",
+    tagColor: "bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    changes: [
+      {
+        type: "feature",
+        title: "작성한 평론 자유롭게 수정 가능",
+        description:
+          "식당 상세 화면에서 각 인턴 평론 카드 우측 상단의 '✏️ 수정' 버튼을 눌러 별점, 한줄평, 추천 메뉴, 상세 평론, 재방문 여부를 언제든 수정하고 노션 DB에 실시간 반영할 수 있습니다.",
+      },
+    ],
+  },
   {
     version: "v1.3.1",
     date: "2026년 8월 26일",
