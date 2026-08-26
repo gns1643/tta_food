@@ -2,13 +2,11 @@ import { Client } from "@notionhq/client";
 import { Restaurant, Review, CreateRestaurantInput, CreateReviewInput, Stats } from "@/types";
 
 const notion = new Client({
-  auth: process.env.NOTION_API_KEY,,
+  auth: process.env.NOTION_API_KEY,
 });
 
-const RESTAURANT_DB_ID =
-  process.env.NOTION_RESTAURANT_DB_ID || "";
-const REVIEW_DB_ID =
-  process.env.NOTION_REVIEW_DB_ID || "";
+const RESTAURANT_DB_ID = process.env.NOTION_RESTAURANT_DB_ID || "";
+const REVIEW_DB_ID = process.env.NOTION_REVIEW_DB_ID || "";
 
 // In-memory cache for fast responses
 let cachedData: {
@@ -32,6 +30,10 @@ export async function fetchAllData(forceRefresh = false): Promise<{
     return { restaurants: cachedData.restaurants, reviews: cachedData.reviews };
   }
 
+  if (!RESTAURANT_DB_ID || !REVIEW_DB_ID || !process.env.NOTION_API_KEY) {
+    return { restaurants: [], reviews: [] };
+  }
+
   // 1. Query Restaurant DB
   const restQuery = await notion.databases.query({
     database_id: RESTAURANT_DB_ID,
@@ -44,7 +46,7 @@ export async function fetchAllData(forceRefresh = false): Promise<{
     page_size: 100,
     sorts: [
       {
-        property: "諛⑸Ц??,
+        property: "방문일",
         direction: "descending",
       },
     ],
@@ -53,15 +55,15 @@ export async function fetchAllData(forceRefresh = false): Promise<{
   // Map Reviews
   const rawReviews: Review[] = reviewQuery.results.map((page: any) => {
     const props = page.properties;
-    const title = props["?쒕ぉ"]?.title?.[0]?.plain_text || "";
-    const author = props["?묒꽦??]?.select?.name || "?듬챸";
-    const visitDate = props["諛⑸Ц??]?.date?.start || null;
-    const rating = typeof props["蹂꾩젏"]?.number === "number" ? props["蹂꾩젏"]?.number : null;
-    const shortComment = props["?쒖쨪??]?.rich_text?.[0]?.plain_text || "";
-    const detailComment = props["?곸꽭 ?됰줎"]?.rich_text?.[0]?.plain_text || "";
-    const recommendedMenu = props["異붿쿇 硫붾돱"]?.rich_text?.[0]?.plain_text || "";
-    const revisit = Boolean(props["?щ갑臾?"]?.checkbox);
-    const restaurantRelations = props["?뚯떇??]?.relation || [];
+    const title = props["제목"]?.title?.[0]?.plain_text || "";
+    const author = props["작성자"]?.select?.name || "익명";
+    const visitDate = props["방문일"]?.date?.start || null;
+    const rating = typeof props["별점"]?.number === "number" ? props["별점"]?.number : null;
+    const shortComment = props["한줄평"]?.rich_text?.[0]?.plain_text || "";
+    const detailComment = props["상세 평론"]?.rich_text?.[0]?.plain_text || "";
+    const recommendedMenu = props["추천 메뉴"]?.rich_text?.[0]?.plain_text || "";
+    const revisit = Boolean(props["재방문?"]?.checkbox);
+    const restaurantRelations = props["음식점"]?.relation || [];
     const restaurantId = restaurantRelations[0]?.id || "";
 
     return {
@@ -83,7 +85,7 @@ export async function fetchAllData(forceRefresh = false): Promise<{
   const restNameMap = new Map<string, string>();
   restQuery.results.forEach((page: any) => {
     const props = page.properties;
-    const name = props["?뚯떇??]?.title?.[0]?.plain_text || "?대쫫 ?놁쓬";
+    const name = props["음식점"]?.title?.[0]?.plain_text || "이름 없음";
     restNameMap.set(page.id, name);
   });
 
@@ -95,11 +97,10 @@ export async function fetchAllData(forceRefresh = false): Promise<{
   // Map Restaurants & connect reviews
   const restaurants: Restaurant[] = restQuery.results.map((page: any) => {
     const props = page.properties;
-    const name = props["?뚯떇??]?.title?.[0]?.plain_text || "?대쫫 ?놁쓬";
-    // In Notion, the property name for building/location is "嫄대Ъ"
-    const building = props["嫄대Ъ"]?.select?.name || "湲고?";
-    const categories = props["移댄뀒怨좊━"]?.multi_select?.map((c: any) => c.name) || [];
-    const priceRange = props["媛寃⑸?"]?.select?.name;
+    const name = props["음식점"]?.title?.[0]?.plain_text || "이름 없음";
+    const building = props["건물"]?.select?.name || "기타";
+    const categories = props["카테고리"]?.multi_select?.map((c: any) => c.name) || [];
+    const priceRange = props["가격대"]?.select?.name;
     const restReviews = reviews.filter((r) => r.restaurantId === page.id);
 
     // Calculate ratings
@@ -166,7 +167,7 @@ export async function fetchAllData(forceRefresh = false): Promise<{
 
 export async function createRestaurant(input: CreateRestaurantInput): Promise<Restaurant> {
   const properties: any = {
-    "?뚯떇??: {
+    "음식점": {
       title: [
         {
           text: {
@@ -175,7 +176,7 @@ export async function createRestaurant(input: CreateRestaurantInput): Promise<Re
         },
       ],
     },
-    "嫄대Ъ": {
+    "건물": {
       select: {
         name: input.building,
       },
@@ -183,13 +184,13 @@ export async function createRestaurant(input: CreateRestaurantInput): Promise<Re
   };
 
   if (input.categories && input.categories.length > 0) {
-    properties["移댄뀒怨좊━"] = {
+    properties["카테고리"] = {
       multi_select: input.categories.map((cat) => ({ name: cat })),
     };
   }
 
   if (input.priceRange) {
-    properties["媛寃⑸?"] = {
+    properties["가격대"] = {
       select: {
         name: input.priceRange,
       },
@@ -225,11 +226,11 @@ export async function createRestaurant(input: CreateRestaurantInput): Promise<Re
 export async function createReview(input: CreateReviewInput): Promise<Review> {
   const { restaurants } = await fetchAllData(false);
   const targetRest = restaurants.find((r) => r.id === input.restaurantId);
-  const restName = targetRest?.name || "?뚯떇??;
+  const restName = targetRest?.name || "음식점";
   const title = `${restName} - ${input.author}`;
 
   const properties: any = {
-    "?쒕ぉ": {
+    "제목": {
       title: [
         {
           text: {
@@ -238,32 +239,32 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
         },
       ],
     },
-    "?뚯떇??: {
+    "음식점": {
       relation: [
         {
           id: input.restaurantId,
         },
       ],
     },
-    "?묒꽦??: {
+    "작성자": {
       select: {
         name: input.author,
       },
     },
-    "?щ갑臾?": {
+    "재방문?": {
       checkbox: Boolean(input.revisit),
     },
   };
 
   if (input.visitDate) {
-    properties["諛⑸Ц??] = {
+    properties["방문일"] = {
       date: {
         start: input.visitDate,
       },
     };
   } else {
     const today = new Date().toISOString().split("T")[0];
-    properties["諛⑸Ц??] = {
+    properties["방문일"] = {
       date: {
         start: today,
       },
@@ -271,13 +272,13 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
   }
 
   if (typeof input.rating === "number") {
-    properties["蹂꾩젏"] = {
+    properties["별점"] = {
       number: input.rating,
     };
   }
 
   if (input.shortComment) {
-    properties["?쒖쨪??] = {
+    properties["한줄평"] = {
       rich_text: [
         {
           text: {
@@ -289,7 +290,7 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
   }
 
   if (input.detailComment) {
-    properties["?곸꽭 ?됰줎"] = {
+    properties["상세 평론"] = {
       rich_text: [
         {
           text: {
@@ -301,7 +302,7 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
   }
 
   if (input.recommendedMenu) {
-    properties["異붿쿇 硫붾돱"] = {
+    properties["추천 메뉴"] = {
       rich_text: [
         {
           text: {
