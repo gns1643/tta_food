@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { X, Star, Calendar, Utensils, ThumbsUp, Sparkles, Loader2, User } from "lucide-react";
@@ -15,6 +15,7 @@ interface AddReviewModalProps {
 }
 
 const DEFAULT_AUTHORS = ["지훈", "준협", "윤섭", "동찬"];
+const RATING_PRESETS = [1.0, 2.0, 3.0, 3.5, 4.0, 4.5, 5.0];
 
 export default function AddReviewModal({
   isOpen,
@@ -30,7 +31,6 @@ export default function AddReviewModal({
   const [isCustomAuthor, setIsCustomAuthor] = useState(false);
   const [visitDate, setVisitDate] = useState(new Date().toISOString().split("T")[0]);
   const [rating, setRating] = useState<number>(4.0);
-  const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [shortComment, setShortComment] = useState("");
   const [recommendedMenu, setRecommendedMenu] = useState("");
   const [detailComment, setDetailComment] = useState("");
@@ -59,6 +59,12 @@ export default function AddReviewModal({
   }, [defaultAuthor]);
 
   if (!isOpen) return null;
+
+  const handleRatingInput = (val: number) => {
+    if (isNaN(val)) return;
+    const clamped = Math.max(0, Math.min(5.0, Number(val.toFixed(1))));
+    setRating(clamped);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,7 +128,7 @@ export default function AddReviewModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-3xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white relative">
+        <div className="p-6 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white relative flex-shrink-0">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-1.5 text-white/80 hover:text-white hover:bg-white/20 rounded-full transition"
@@ -162,7 +168,7 @@ export default function AddReviewModal({
               </option>
               {restaurants.map((rest) => (
                 <option key={rest.id} value={rest.id}>
-                  {rest.name} ({rest.location || "기타"})
+                  {rest.name} ({rest.building || "기타"})
                 </option>
               ))}
             </select>
@@ -214,46 +220,80 @@ export default function AddReviewModal({
             )}
           </div>
 
-          {/* Visit Date & Rating in Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Visit Date */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                방문일
+          {/* Visit Date */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              방문일
+            </label>
+            <input
+              type="date"
+              value={visitDate}
+              onChange={(e) => setVisitDate(e.target.value)}
+              className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          {/* Upgraded Interactive Rating Section (Slider Bar + Number Input + Preset Buttons) */}
+          <div className="bg-amber-50/50 border border-amber-200/80 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-amber-900 flex items-center space-x-1.5">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
+                <span>평점 (최대 5.0점)</span>
               </label>
-              <input
-                type="date"
-                value={visitDate}
-                onChange={(e) => setVisitDate(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
-              />
+
+              {/* Number Input Box next to bar */}
+              <div className="flex items-center space-x-1 bg-white px-2.5 py-1 rounded-xl border border-amber-300 shadow-sm">
+                <input
+                  type="number"
+                  min="0.0"
+                  max="5.0"
+                  step="0.1"
+                  value={rating}
+                  onChange={(e) => handleRatingInput(parseFloat(e.target.value))}
+                  className="w-12 text-base font-black text-amber-900 text-center focus:outline-none bg-transparent"
+                />
+                <span className="text-xs font-bold text-amber-500">/ 5.0</span>
+              </div>
             </div>
 
-            {/* Rating Stars */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                별점 ({rating}점 / 5.0점)
-              </label>
-              <div className="flex items-center space-x-1.5 py-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(null)}
-                    className="p-1 hover:scale-125 transition-transform"
-                  >
-                    <Star
-                      className={`w-6 h-6 ${
-                        (hoverRating ?? rating) >= star
-                          ? "text-amber-400 fill-amber-400 drop-shadow-sm"
-                          : "text-slate-200"
-                      }`}
-                    />
-                  </button>
-                ))}
+            {/* Slider Range Bar */}
+            <div className="space-y-1">
+              <input
+                type="range"
+                min="0.0"
+                max="5.0"
+                step="0.1"
+                value={rating}
+                onChange={(e) => handleRatingInput(parseFloat(e.target.value))}
+                className="w-full h-2.5 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+              />
+              <div className="flex justify-between text-[10px] text-amber-700/70 font-semibold px-0.5">
+                <span>0.0</span>
+                <span>1.0</span>
+                <span>2.0</span>
+                <span>3.0</span>
+                <span>4.0</span>
+                <span>5.0</span>
               </div>
+            </div>
+
+            {/* Quick Preset Buttons */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] font-semibold text-amber-800 mr-1">빠른 선택:</span>
+              {RATING_PRESETS.map((p) => (
+                <button
+                  type="button"
+                  key={p}
+                  onClick={() => setRating(p)}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-bold transition ${
+                    rating === p
+                      ? "bg-amber-500 text-white shadow-sm"
+                      : "bg-white text-amber-800 hover:bg-amber-100 border border-amber-200"
+                  }`}
+                >
+                  {p.toFixed(1)}
+                </button>
+              ))}
             </div>
           </div>
 
