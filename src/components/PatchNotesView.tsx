@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon } from "lucide-react";
+import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon, Target } from "lucide-react";
 
 interface PatchItem {
   version: string;
@@ -17,6 +17,21 @@ interface PatchItem {
 }
 
 const PATCH_HISTORY: PatchItem[] = [
+  {
+    version: "v1.3.1",
+    date: "2026년 8월 26일",
+    title: "재방문율(%) 산출 로직 고도화 🎯",
+    tag: "통계 로직 개선",
+    tagColor: "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    changes: [
+      {
+        type: "fix",
+        title: "실제 평론 작성자 기준 재방문율 집계",
+        description:
+          "기존 노션 템플릿 생성 시 남겨진 미작성 빈 평론 항목을 모수에서 제외하고, 실제로 평점이나 후기를 남긴 인턴 기준으로만 재방문 희망률(%)을 정확하게 계산하도록 개선했습니다.",
+      },
+    ],
+  },
   {
     version: "v1.3.0",
     date: "2026년 8월 26일",

@@ -52,34 +52,43 @@ export async function fetchAllData(forceRefresh = false): Promise<{
     ],
   });
 
-  // Map Reviews
-  const rawReviews: Review[] = reviewQuery.results.map((page: any) => {
-    const props = page.properties;
-    const title = props["제목"]?.title?.[0]?.plain_text || "";
-    const author = props["작성자"]?.select?.name || "익명";
-    const visitDate = props["방문일"]?.date?.start || null;
-    const rating = typeof props["별점"]?.number === "number" ? props["별점"]?.number : null;
-    const shortComment = props["한줄평"]?.rich_text?.[0]?.plain_text || "";
-    const detailComment = props["상세 평론"]?.rich_text?.[0]?.plain_text || "";
-    const recommendedMenu = props["추천 메뉴"]?.rich_text?.[0]?.plain_text || "";
-    const revisit = Boolean(props["재방문?"]?.checkbox);
-    const restaurantRelations = props["음식점"]?.relation || [];
-    const restaurantId = restaurantRelations[0]?.id || "";
+  // Map Reviews & Filter out unwritten/empty template rows
+  const rawReviews: Review[] = reviewQuery.results
+    .map((page: any) => {
+      const props = page.properties;
+      const title = props["제목"]?.title?.[0]?.plain_text || "";
+      const author = props["작성자"]?.select?.name || "익명";
+      const visitDate = props["방문일"]?.date?.start || null;
+      const rating = typeof props["별점"]?.number === "number" ? props["별점"]?.number : null;
+      const shortComment = props["한줄평"]?.rich_text?.[0]?.plain_text || "";
+      const detailComment = props["상세 평론"]?.rich_text?.[0]?.plain_text || "";
+      const recommendedMenu = props["추천 메뉴"]?.rich_text?.[0]?.plain_text || "";
+      const revisit = Boolean(props["재방문?"]?.checkbox);
+      const restaurantRelations = props["음식점"]?.relation || [];
+      const restaurantId = restaurantRelations[0]?.id || "";
 
-    return {
-      id: page.id,
-      title,
-      restaurantId,
-      author,
-      visitDate,
-      rating,
-      shortComment,
-      detailComment,
-      recommendedMenu,
-      revisit,
-      url: page.url,
-    };
-  });
+      return {
+        id: page.id,
+        title,
+        restaurantId,
+        author,
+        visitDate,
+        rating,
+        shortComment,
+        detailComment,
+        recommendedMenu,
+        revisit,
+        url: page.url,
+      };
+    })
+    .filter((r) => {
+      // Only consider reviews that have an actual rating OR comments written by the user
+      const hasRating = r.rating !== null && r.rating > 0;
+      const hasShort = r.shortComment.trim().length > 0;
+      const hasDetail = r.detailComment.trim().length > 0;
+      const hasMenu = r.recommendedMenu.trim().length > 0;
+      return hasRating || hasShort || hasDetail || hasMenu;
+    });
 
   // Build a map of restaurant ID -> restaurant Name for reviews
   const restNameMap = new Map<string, string>();
@@ -117,6 +126,7 @@ export async function fetchAllData(forceRefresh = false): Promise<{
           )
         : 0;
 
+    // Calculate revisit rate based ONLY on users who actually wrote a review
     const revisitCount = restReviews.filter((r) => r.revisit).length;
     const revisitRate =
       restReviews.length > 0
