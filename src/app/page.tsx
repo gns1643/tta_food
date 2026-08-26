@@ -8,6 +8,7 @@ import RestaurantDetailModal from "@/components/RestaurantDetailModal";
 import AddRestaurantModal from "@/components/AddRestaurantModal";
 import AddReviewModal from "@/components/AddReviewModal";
 import StatsView from "@/components/StatsView";
+import PatchNotesView from "@/components/PatchNotesView";
 import { Restaurant, Review } from "@/types";
 
 const BUILDING_TABS = ["전체", "누리꿈", "사보이", "kgit", "기타"];
@@ -15,7 +16,7 @@ const CATEGORY_FILTER_LIST = ["전체", "한식", "일식", "중식", "양식", 
 const INTERN_FILTER_LIST = ["전체", "지훈", "준협", "윤섭", "동찬"];
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<"list" | "stats">("list");
+  const [activeTab, setActiveTab] = useState<"list" | "stats" | "patchnotes">("list");
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -190,7 +191,9 @@ export default function HomePage() {
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {activeTab === "stats" ? (
+        {activeTab === "patchnotes" ? (
+          <PatchNotesView />
+        ) : activeTab === "stats" ? (
           <StatsView
             onOpenDetail={(r) => setSelectedRestaurantForDetail(r)}
             onOpenAddReview={handleOpenAddReview}

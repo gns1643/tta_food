@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
-import { UtensilsCrossed, Trophy, Plus, PenSquare, RefreshCw, User, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { UtensilsCrossed, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User } from "lucide-react";
 
 interface NavbarProps {
-  activeTab: "list" | "stats";
-  setActiveTab: (tab: "list" | "stats") => void;
+  activeTab: "list" | "stats" | "patchnotes";
+  setActiveTab: (tab: "list" | "stats" | "patchnotes") => void;
   onOpenAddRestaurant: () => void;
   onOpenAddReview: (restaurantId?: string) => void;
   onRefresh: () => void;
@@ -62,13 +62,13 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Navigation Tabs */}
+          {/* Navigation Tabs (Desktop) */}
           <div className="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
             <button
               onClick={() => setActiveTab("list")}
-              className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex items-center space-x-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
                 activeTab === "list"
-                  ? "bg-white text-orange-600 shadow-sm"
+                  ? "bg-white text-orange-600 shadow-sm font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -77,14 +77,25 @@ export default function Navbar({
             </button>
             <button
               onClick={() => setActiveTab("stats")}
-              className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex items-center space-x-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
                 activeTab === "stats"
-                  ? "bg-white text-orange-600 shadow-sm"
+                  ? "bg-white text-orange-600 shadow-sm font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <Trophy className="w-4 h-4" />
               <span>랭킹 & 통계</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("patchnotes")}
+              className={`flex items-center space-x-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
+                activeTab === "patchnotes"
+                  ? "bg-white text-orange-600 shadow-sm font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <ScrollText className="w-4 h-4" />
+              <span>패치노트</span>
             </button>
           </div>
 
@@ -165,7 +176,7 @@ export default function Navbar({
         <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-100">
           <button
             onClick={() => setActiveTab("list")}
-            className={`flex items-center space-x-1.5 text-xs font-medium py-1 px-3 rounded-lg ${
+            className={`flex items-center space-x-1 text-xs font-medium py-1 px-2.5 rounded-lg ${
               activeTab === "list" ? "text-orange-600 bg-orange-50 font-bold" : "text-slate-600"
             }`}
           >
@@ -174,7 +185,7 @@ export default function Navbar({
           </button>
           <button
             onClick={() => setActiveTab("stats")}
-            className={`flex items-center space-x-1.5 text-xs font-medium py-1 px-3 rounded-lg ${
+            className={`flex items-center space-x-1 text-xs font-medium py-1 px-2.5 rounded-lg ${
               activeTab === "stats" ? "text-orange-600 bg-orange-50 font-bold" : "text-slate-600"
             }`}
           >
@@ -182,11 +193,13 @@ export default function Navbar({
             <span>랭킹 & 통계</span>
           </button>
           <button
-            onClick={onOpenAddRestaurant}
-            className="flex items-center space-x-1.5 text-xs font-medium py-1 px-3 rounded-lg text-slate-600"
+            onClick={() => setActiveTab("patchnotes")}
+            className={`flex items-center space-x-1 text-xs font-medium py-1 px-2.5 rounded-lg ${
+              activeTab === "patchnotes" ? "text-orange-600 bg-orange-50 font-bold" : "text-slate-600"
+            }`}
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>식당 등록</span>
+            <ScrollText className="w-3.5 h-3.5" />
+            <span>패치노트</span>
           </button>
         </div>
       </div>
