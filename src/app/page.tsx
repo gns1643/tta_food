@@ -22,6 +22,9 @@ export default function HomePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState("");
 
+  // Dark Mode State
+  const [isDark, setIsDark] = useState(false);
+
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBuilding, setSelectedBuilding] = useState("전체");
@@ -43,12 +46,37 @@ export default function HomePage() {
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
+    // Check saved theme or system preference
+    const savedTheme = localStorage.getItem("tta_theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove("dark");
+    }
+
     const savedUser = localStorage.getItem("tta_intern_food_user");
     if (savedUser) {
       setCurrentUser(savedUser);
     }
     fetchRestaurants();
   }, []);
+
+  const toggleDarkMode = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("tta_theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("tta_theme", "light");
+      }
+      return next;
+    });
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -169,10 +197,10 @@ export default function HomePage() {
   }, [restaurants, searchQuery, selectedBuilding, selectedCategory, selectedInternFilter, sortBy]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col transition-colors duration-200">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl border border-slate-700 animate-in slide-in-from-bottom-5 duration-200 flex items-center space-x-2">
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-xl border border-slate-700 dark:border-slate-600 animate-in slide-in-from-bottom-5 duration-200 flex items-center space-x-2">
           <Sparkles className="w-4 h-4 text-amber-400" />
           <span className="text-sm font-bold">{toastMessage}</span>
         </div>
@@ -188,6 +216,8 @@ export default function HomePage() {
         isRefreshing={isRefreshing}
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
+        isDark={isDark}
+        toggleDarkMode={toggleDarkMode}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -201,7 +231,7 @@ export default function HomePage() {
         ) : (
           <div className="space-y-6">
             {/* Hero / Filter Bar */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
               {/* Search Bar */}
               <div className="relative">
                 <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -210,14 +240,14 @@ export default function HomePage() {
                   placeholder="식당 이름, 카테고리, 메뉴, 건물, 인턴 한줄평 검색..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
                 />
               </div>
 
               {/* Building Tabs */}
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-400 mr-1 flex items-center">
-                  <Building2 className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 flex items-center">
+                  <Building2 className="w-3.5 h-3.5 mr-1" />
                   건물:
                 </span>
                 {BUILDING_TABS.map((bldg) => (
@@ -226,8 +256,8 @@ export default function HomePage() {
                     onClick={() => setSelectedBuilding(bldg)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                       selectedBuilding === bldg
-                        ? "bg-slate-900 text-white shadow-sm"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-sm"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                     }`}
                   >
                     {bldg}
@@ -236,11 +266,11 @@ export default function HomePage() {
               </div>
 
               {/* Category Pills & Sort / Intern Row */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1 border-t border-slate-100">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-slate-800">
                 {/* Category Pills */}
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-xs font-bold text-slate-400 mr-1 flex items-center">
-                    <Tag className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                  <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 flex items-center">
+                    <Tag className="w-3.5 h-3.5 mr-1" />
                     종류:
                   </span>
                   {CATEGORY_FILTER_LIST.map((cat) => (
@@ -249,8 +279,8 @@ export default function HomePage() {
                       onClick={() => setSelectedCategory(cat)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
                         selectedCategory === cat
-                          ? "bg-orange-500 text-white font-bold"
-                          : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/60"
+                          ? "bg-orange-500 text-white font-bold shadow-sm"
+                          : "bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700"
                       }`}
                     >
                       {cat}
@@ -261,16 +291,16 @@ export default function HomePage() {
                 {/* Sort & Intern Filter */}
                 <div className="flex flex-wrap items-center gap-2">
                   {/* Intern Reviewer Filter */}
-                  <div className="flex items-center space-x-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
+                  <div className="flex items-center space-x-1 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
                     <User className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-500 font-medium">작성자:</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">작성자:</span>
                     <select
                       value={selectedInternFilter}
                       onChange={(e) => setSelectedInternFilter(e.target.value)}
-                      className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                      className="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                     >
                       {INTERN_FILTER_LIST.map((name) => (
-                        <option key={name} value={name}>
+                        <option key={name} value={name} className="dark:bg-slate-800">
                           {name}
                         </option>
                       ))}
@@ -278,18 +308,18 @@ export default function HomePage() {
                   </div>
 
                   {/* Sort Selector */}
-                  <div className="flex items-center space-x-1 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
+                  <div className="flex items-center space-x-1 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
                     <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-500 font-medium">정렬:</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">정렬:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                      className="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                     >
-                      <option value="rating">평점 높은 순</option>
-                      <option value="reviews">평론 많은 순</option>
-                      <option value="latest">최신 등록순</option>
-                      <option value="name">가나다 순</option>
+                      <option value="rating" className="dark:bg-slate-800">평점 높은 순</option>
+                      <option value="reviews" className="dark:bg-slate-800">평론 많은 순</option>
+                      <option value="latest" className="dark:bg-slate-800">최신 등록순</option>
+                      <option value="name" className="dark:bg-slate-800">가나다 순</option>
                     </select>
                   </div>
                 </div>
@@ -298,14 +328,14 @@ export default function HomePage() {
 
             {/* Results Count & Quick CTA */}
             <div className="flex items-center justify-between px-1">
-              <span className="text-xs font-bold text-slate-500">
-                총 <span className="text-orange-600 font-extrabold">{filteredRestaurants.length}</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                총 <span className="text-orange-600 dark:text-orange-400 font-extrabold">{filteredRestaurants.length}</span>
                 개의 음식점
               </span>
 
               <button
                 onClick={() => setIsAddRestaurantOpen(true)}
-                className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center space-x-1 bg-orange-50 px-3 py-1 rounded-lg transition"
+                className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 flex items-center space-x-1 bg-orange-50 dark:bg-orange-950/40 px-3 py-1 rounded-lg transition"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>식당 직접 추가하기</span>
@@ -316,19 +346,19 @@ export default function HomePage() {
             {loading ? (
               <div className="py-24 text-center">
                 <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-3" />
-                <p className="text-sm font-medium text-slate-600">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   노션에서 음식점과 평론 데이터를 동기화하고 있습니다...
                 </p>
               </div>
             ) : error ? (
-              <div className="py-16 text-center text-red-500 bg-red-50 rounded-2xl p-6 border border-red-200">
+              <div className="py-16 text-center text-red-500 bg-red-50 dark:bg-red-950/50 rounded-2xl p-6 border border-red-200 dark:border-red-800">
                 {error}
               </div>
             ) : filteredRestaurants.length === 0 ? (
-              <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200 p-8">
-                <UtensilsCrossed className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <h4 className="text-base font-bold text-slate-800">검색 결과가 없습니다</h4>
-                <p className="text-xs text-slate-500 mt-1">
+              <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 p-8">
+                <UtensilsCrossed className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                <h4 className="text-base font-bold text-slate-800 dark:text-slate-200">검색 결과가 없습니다</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   새로운 음식점을 등록하고 인턴들과 함께 첫 평론을 남겨보세요!
                 </p>
                 <button

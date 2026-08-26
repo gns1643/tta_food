@@ -125,8 +125,8 @@ export default function AddReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-3xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white relative flex-shrink-0">
           <button
@@ -147,21 +147,21 @@ export default function AddReviewModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-3 text-xs bg-red-50 text-red-700 rounded-xl border border-red-200">
+            <div className="p-3 text-xs bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
 
           {/* Restaurant Selector */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
               대상 음식점 <span className="text-red-500">*</span>
             </label>
             <select
               value={restaurantId}
               onChange={(e) => setRestaurantId(e.target.value)}
               required
-              className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 font-medium text-slate-900"
+              className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500 font-medium"
             >
               <option value="" disabled>
                 음식점을 선택해주세요
@@ -176,7 +176,7 @@ export default function AddReviewModal({
 
           {/* Author Selector */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
               작성자 (인턴) <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
@@ -191,7 +191,7 @@ export default function AddReviewModal({
                   className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition ${
                     !isCustomAuthor && author === name
                       ? "bg-orange-500 border-orange-500 text-white shadow-sm"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                   }`}
                 >
                   {name}
@@ -203,7 +203,7 @@ export default function AddReviewModal({
                 className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition ${
                   isCustomAuthor
                     ? "bg-orange-500 border-orange-500 text-white"
-                    : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                    : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 }`}
               >
                 + 직접 입력
@@ -215,34 +215,34 @@ export default function AddReviewModal({
                 placeholder="인턴 이름 입력"
                 value={customAuthor}
                 onChange={(e) => setCustomAuthor(e.target.value)}
-                className="mt-2 w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
+                className="mt-2 w-full px-3.5 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500"
               />
             )}
           </div>
 
           {/* Visit Date */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
               방문일
             </label>
             <input
               type="date"
               value={visitDate}
               onChange={(e) => setVisitDate(e.target.value)}
-              className="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
-          {/* Upgraded Interactive Rating Section (Slider Bar + Number Input + Preset Buttons) */}
-          <div className="bg-amber-50/50 border border-amber-200/80 rounded-2xl p-4 space-y-3">
+          {/* Upgraded Interactive Rating Section */}
+          <div className="bg-amber-50/50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 rounded-2xl p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-amber-900 flex items-center space-x-1.5">
+              <label className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center space-x-1.5">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
                 <span>평점 (최대 5.0점)</span>
               </label>
 
               {/* Number Input Box next to bar */}
-              <div className="flex items-center space-x-1 bg-white px-2.5 py-1 rounded-xl border border-amber-300 shadow-sm">
+              <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-amber-300 dark:border-amber-700 shadow-sm">
                 <input
                   type="number"
                   min="0.0"
@@ -250,9 +250,9 @@ export default function AddReviewModal({
                   step="0.1"
                   value={rating}
                   onChange={(e) => handleRatingInput(parseFloat(e.target.value))}
-                  className="w-12 text-base font-black text-amber-900 text-center focus:outline-none bg-transparent"
+                  className="w-12 text-base font-black text-amber-900 dark:text-amber-300 text-center focus:outline-none bg-transparent"
                 />
-                <span className="text-xs font-bold text-amber-500">/ 5.0</span>
+                <span className="text-xs font-bold text-amber-500 dark:text-amber-400">/ 5.0</span>
               </div>
             </div>
 
@@ -265,9 +265,9 @@ export default function AddReviewModal({
                 step="0.1"
                 value={rating}
                 onChange={(e) => handleRatingInput(parseFloat(e.target.value))}
-                className="w-full h-2.5 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                className="w-full h-2.5 bg-amber-200 dark:bg-amber-900/60 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
-              <div className="flex justify-between text-[10px] text-amber-700/70 font-semibold px-0.5">
+              <div className="flex justify-between text-[10px] text-amber-700/70 dark:text-amber-400/70 font-semibold px-0.5">
                 <span>0.0</span>
                 <span>1.0</span>
                 <span>2.0</span>
@@ -279,7 +279,7 @@ export default function AddReviewModal({
 
             {/* Quick Preset Buttons */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[11px] font-semibold text-amber-800 mr-1">빠른 선택:</span>
+              <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-300 mr-1">빠른 선택:</span>
               {RATING_PRESETS.map((p) => (
                 <button
                   type="button"
@@ -288,7 +288,7 @@ export default function AddReviewModal({
                   className={`px-2 py-0.5 rounded-lg text-xs font-bold transition ${
                     rating === p
                       ? "bg-amber-500 text-white shadow-sm"
-                      : "bg-white text-amber-800 hover:bg-amber-100 border border-amber-200"
+                      : "bg-white dark:bg-slate-800 text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/60 border border-amber-200 dark:border-amber-800"
                   }`}
                 >
                   {p.toFixed(1)}
@@ -299,52 +299,52 @@ export default function AddReviewModal({
 
           {/* Short Comment */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              한줄평 <span className="text-slate-400 font-normal">(핵심 요약)</span>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+              한줄평 <span className="text-slate-400 dark:text-slate-500 font-normal">(핵심 요약)</span>
             </label>
             <input
               type="text"
               placeholder="예: 국물이 깊고 진함, 점심 회식으로 최고"
               value={shortComment}
               onChange={(e) => setShortComment(e.target.value)}
-              className="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           {/* Recommended Menu */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              추천 메뉴 <span className="text-slate-400 font-normal">(대표 추천 요리)</span>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+              추천 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(대표 추천 요리)</span>
             </label>
             <input
               type="text"
               placeholder="예: 얼큰 순대국, 안심 돈가스"
               value={recommendedMenu}
               onChange={(e) => setRecommendedMenu(e.target.value)}
-              className="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           {/* Detailed Comment */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              상세 평론 <span className="text-slate-400 font-normal">(선택 사항)</span>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+              상세 평론 <span className="text-slate-400 dark:text-slate-500 font-normal">(선택 사항)</span>
             </label>
             <textarea
               rows={2}
               placeholder="맛, 분위기, 웨이팅 시간, 양 등 상세한 후기를 자유롭게 적어주세요."
               value={detailComment}
               onChange={(e) => setDetailComment(e.target.value)}
-              className="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 resize-none"
+              className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500 resize-none"
             />
           </div>
 
           {/* Revisit Toggle */}
           <div className="pt-2">
-            <label className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl cursor-pointer border border-slate-200 transition">
+            <label className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-2xl cursor-pointer border border-slate-200 dark:border-slate-700 transition">
               <div className="flex items-center space-x-2.5">
-                <ThumbsUp className={`w-4 h-4 ${revisit ? "text-emerald-600" : "text-slate-400"}`} />
-                <span className="text-xs font-bold text-slate-800">
+                <ThumbsUp className={`w-4 h-4 ${revisit ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`} />
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                   다시 방문할 의사가 있나요?
                 </span>
               </div>
@@ -362,7 +362,7 @@ export default function AddReviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
             >
               취소
             </button>

@@ -83,8 +83,8 @@ export default function AddRestaurantModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-md max-h-[92vh] rounded-3xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-slate-900 w-full max-w-md max-h-[92vh] rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-orange-500 to-amber-500 text-white relative flex-shrink-0">
           <button
@@ -105,14 +105,14 @@ export default function AddRestaurantModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-3 text-xs bg-red-50 text-red-700 rounded-xl border border-red-200">
+            <div className="p-3 text-xs bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
 
           {/* Restaurant Name */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
               음식점 이름 <span className="text-red-500">*</span>
             </label>
             <input
@@ -121,13 +121,13 @@ export default function AddRestaurantModal({
               placeholder="예: 옥토끼, 누리꿈 순대국"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              className="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
             />
           </div>
 
           {/* Building / Location Category */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center space-x-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 flex items-center space-x-1">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               <span>건물 / 위치</span>
             </label>
@@ -140,7 +140,7 @@ export default function AddRestaurantModal({
                   className={`py-2 text-xs font-bold rounded-xl border transition ${
                     building === loc
                       ? "bg-orange-500 border-orange-500 text-white shadow-sm"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                   }`}
                 >
                   {loc}
@@ -153,14 +153,14 @@ export default function AddRestaurantModal({
                 placeholder="직접 위치 입력 (예: 월드컵파크, MBC몰)"
                 value={customBuilding}
                 onChange={(e) => setCustomBuilding(e.target.value)}
-                className="mt-2 w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                className="mt-2 w-full px-3.5 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
               />
             )}
           </div>
 
           {/* Food Category Multi-select */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center space-x-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 flex items-center space-x-1">
               <Tag className="w-3.5 h-3.5 text-slate-400" />
               <span>음식 카테고리 (중복 선택 가능)</span>
             </label>
@@ -175,7 +175,7 @@ export default function AddRestaurantModal({
                     className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition ${
                       isSelected
                         ? "bg-amber-500 border-amber-500 text-white shadow-sm"
-                        : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     {cat}
@@ -187,7 +187,7 @@ export default function AddRestaurantModal({
 
           {/* Price Range */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center space-x-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 flex items-center space-x-1">
               <DollarSign className="w-3.5 h-3.5 text-slate-400" />
               <span>가격대</span>
             </label>
@@ -199,8 +199,8 @@ export default function AddRestaurantModal({
                   onClick={() => setPriceRange(p)}
                   className={`py-1.5 px-2 text-xs font-bold rounded-xl border transition ${
                     priceRange === p
-                      ? "bg-slate-900 border-slate-900 text-white"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      ? "bg-slate-900 dark:bg-slate-100 border-slate-900 dark:border-slate-100 text-white dark:text-slate-900"
+                      : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                   }`}
                 >
                   {p}
@@ -217,7 +217,7 @@ export default function AddRestaurantModal({
               onChange={(e) => setOpenReviewAfter(e.target.checked)}
               className="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500"
             />
-            <span className="text-xs font-medium text-slate-700">
+            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
               식당 등록 후 바로 평론 작성창 열기
             </span>
           </label>
@@ -227,7 +227,7 @@ export default function AddRestaurantModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
             >
               취소
             </button>

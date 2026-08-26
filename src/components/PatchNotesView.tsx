@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History } from "lucide-react";
+import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon } from "lucide-react";
 
 interface PatchItem {
   version: string;
@@ -18,11 +18,32 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.3.0",
+    date: "2026년 8월 26일",
+    title: "야간 모드 (Dark Mode) 공식 지원 🌙",
+    tag: "UI / 테마 업데이트",
+    tagColor: "bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800",
+    changes: [
+      {
+        type: "design",
+        title: "다크 테마 (야간 모드) 추가",
+        description:
+          "눈의 피로를 덜어주는 고대비 다크 모드가 추가되었습니다. 상단 헤더의 달/해(🌙/☀️) 아이콘을 클릭하여 언제든 테마를 전환할 수 있으며, 설정한 모드는 브라우저에 자동 저장됩니다.",
+      },
+      {
+        type: "design",
+        title: "전체 화면 다크 모드 최적화",
+        description:
+          "음식점 카드, 평론 작성/등록 모달, 랭킹 통계 대시보드 및 타임라인의 가독성을 다크 모드에 맞춰 섬세하게 조정했습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.2.0",
     date: "2026년 8월 26일",
     title: "평점 슬라이더 입력 & 패치노트 신설",
     tag: "기능 업데이트",
-    tagColor: "bg-orange-100 text-orange-800 border-orange-200",
+    tagColor: "bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800",
     changes: [
       {
         type: "feature",
@@ -49,7 +70,7 @@ const PATCH_HISTORY: PatchItem[] = [
     date: "2026년 8월 26일",
     title: "노션 DB 건물 및 카테고리 속성 정밀 동기화",
     tag: "데이터 & 필터 개선",
-    tagColor: "bg-amber-100 text-amber-800 border-amber-200",
+    tagColor: "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800",
     changes: [
       {
         type: "fix",
@@ -76,7 +97,7 @@ const PATCH_HISTORY: PatchItem[] = [
     date: "2026년 8월 26일",
     title: "TTA 인턴 맛집 평론 웹 플랫폼 공식 런칭 🎉",
     tag: "최초 런칭",
-    tagColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    tagColor: "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
     changes: [
       {
         type: "feature",
@@ -111,21 +132,21 @@ export default function PatchNotesView() {
     switch (type) {
       case "feature":
         return (
-          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-orange-100 text-orange-700">
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300">
             <Rocket className="w-3 h-3" />
             <span>신규 기능</span>
           </span>
         );
       case "design":
         return (
-          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-700">
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300">
             <Palette className="w-3 h-3" />
             <span>UI / 디자인</span>
           </span>
         );
       case "fix":
         return (
-          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 text-blue-700">
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">
             <Wrench className="w-3 h-3" />
             <span>개선 / 버그 수정</span>
           </span>
@@ -152,43 +173,43 @@ export default function PatchNotesView() {
       </div>
 
       {/* Timeline List */}
-      <div className="relative border-l-2 border-orange-200 ml-4 sm:ml-6 pl-6 sm:pl-8 space-y-10">
-        {PATCH_HISTORY.map((patch, patchIdx) => (
+      <div className="relative border-l-2 border-orange-200 dark:border-slate-800 ml-4 sm:ml-6 pl-6 sm:pl-8 space-y-10">
+        {PATCH_HISTORY.map((patch) => (
           <div key={patch.version} className="relative group">
             {/* Timeline Pin Dot */}
-            <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-white border-4 border-orange-500 shadow-md group-hover:scale-125 transition-transform flex items-center justify-center">
+            <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-white dark:bg-slate-900 border-4 border-orange-500 shadow-md group-hover:scale-125 transition-transform flex items-center justify-center">
               <div className="w-2 h-2 rounded-full bg-orange-500" />
             </div>
 
             {/* Version Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition space-y-4">
               {/* Card Header */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center space-x-3">
-                  <span className="text-lg font-black text-slate-900">{patch.version}</span>
+                  <span className="text-lg font-black text-slate-900 dark:text-white">{patch.version}</span>
                   <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${patch.tagColor}`}>
                     {patch.tag}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-1 text-xs text-slate-400 font-medium">
+                <div className="flex items-center space-x-1 text-xs text-slate-400 dark:text-slate-500 font-medium">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>{patch.date}</span>
                 </div>
               </div>
 
               {/* Version Title */}
-              <h3 className="text-base font-bold text-slate-900">{patch.title}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{patch.title}</h3>
 
               {/* Detailed Changes */}
               <div className="space-y-3.5 pt-1">
                 {patch.changes.map((change, idx) => (
-                  <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                  <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/80 space-y-1.5">
                     <div className="flex items-center space-x-2">
                       {getTypeBadge(change.type)}
-                      <h4 className="text-sm font-bold text-slate-900">{change.title}</h4>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">{change.title}</h4>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed pl-1">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-1">
                       {change.description}
                     </p>
                   </div>
