@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon, Edit3 } from "lucide-react";
+import { Sparkles, Rocket, Palette, Wrench, Calendar, CheckCircle2, History, Moon, Edit3, ArrowDownAZ } from "lucide-react";
 
 interface PatchItem {
   version: string;
@@ -17,6 +17,21 @@ interface PatchItem {
 }
 
 const PATCH_HISTORY: PatchItem[] = [
+  {
+    version: "v1.4.1",
+    date: "2026년 8월 27일",
+    title: "기본 정렬 기준 '최신순'으로 변경 📅",
+    tag: "UX 개선",
+    tagColor: "bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800",
+    changes: [
+      {
+        type: "feature",
+        title: "기본 정렬 최신순 적용",
+        description:
+          "메인 화면 진입 시 기본 정렬이 '최신순'으로 적용되어, 새로 등록된 식당이나 가장 최근에 평론이 작성된 식당이 상단에 우선적으로 노출됩니다.",
+      },
+    ],
+  },
   {
     version: "v1.4.0",
     date: "2026년 8월 26일",

@@ -26,12 +26,12 @@ export default function HomePage() {
   // Dark Mode State
   const [isDark, setIsDark] = useState(false);
 
-  // Filters & Search
+  // Filters & Search (Default sortBy to "latest")
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBuilding, setSelectedBuilding] = useState("전체");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedInternFilter, setSelectedInternFilter] = useState("전체");
-  const [sortBy, setSortBy] = useState<"rating" | "reviews" | "latest" | "name">("rating");
+  const [sortBy, setSortBy] = useState<"latest" | "rating" | "reviews" | "name">("latest");
 
   // User Profile
   const [currentUser, setCurrentUser] = useState("지훈");
@@ -208,6 +208,16 @@ export default function HomePage() {
         return true;
       })
       .sort((a, b) => {
+        if (sortBy === "latest") {
+          const getTime = (r: Restaurant) => {
+            const dates = r.reviews
+              .map((rv) => (rv.visitDate ? new Date(rv.visitDate).getTime() : 0))
+              .concat(new Date(r.createdAt).getTime())
+              .filter((t) => !isNaN(t) && t > 0);
+            return dates.length > 0 ? Math.max(...dates) : 0;
+          };
+          return getTime(b) - getTime(a);
+        }
         if (sortBy === "rating") {
           return b.avgRating - a.avgRating || b.reviewCount - a.reviewCount;
         }
@@ -216,9 +226,6 @@ export default function HomePage() {
         }
         if (sortBy === "name") {
           return a.name.localeCompare(b.name, "ko");
-        }
-        if (sortBy === "latest") {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         }
         return 0;
       });
@@ -344,9 +351,9 @@ export default function HomePage() {
                       onChange={(e) => setSortBy(e.target.value as any)}
                       className="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                     >
+                      <option value="latest" className="dark:bg-slate-800">최신순 (기본)</option>
                       <option value="rating" className="dark:bg-slate-800">평점 높은 순</option>
                       <option value="reviews" className="dark:bg-slate-800">평론 많은 순</option>
-                      <option value="latest" className="dark:bg-slate-800">최신 등록순</option>
                       <option value="name" className="dark:bg-slate-800">가나다 순</option>
                     </select>
                   </div>
