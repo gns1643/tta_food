@@ -203,7 +203,9 @@ export default function HomePage() {
           const matchName = rest.name.toLowerCase().includes(q);
           const matchBuilding = (rest.building || "").toLowerCase().includes(q);
           const matchCat = rest.categories.some((c) => c.toLowerCase().includes(q));
-          const matchMenu = rest.recommendedMenus.some((m) => m.toLowerCase().includes(q));
+          const matchMenu = (rest.menus || rest.recommendedMenus || []).some((m) =>
+            m.toLowerCase().includes(q)
+          );
           const matchComment = Object.values(rest.authorComments).some((c) =>
             c.toLowerCase().includes(q)
           );

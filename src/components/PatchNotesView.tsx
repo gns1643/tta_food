@@ -18,6 +18,27 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.5.1",
+    date: "2026년 8월 31일",
+    title: "평론별 '주문 메뉴' 등록 체계 통일 및 노션 DB 개편 🍽️",
+    tag: "구조 개편",
+    tagColor: "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    changes: [
+      {
+        type: "feature",
+        title: "평론별 주문 메뉴 등록으로 통일",
+        description:
+          "기존의 '추천 메뉴' 항목을 각 인턴이 해당 방문 시 실제로 주문하여 맛보고 평가한 '주문 메뉴' 기준으로 전면 개편했습니다.",
+      },
+      {
+        type: "feature",
+        title: "노션 DB 속성 및 사이트 전반 실시간 연동",
+        description:
+          "노션 평론 DB의 속성명을 '주문 메뉴'로 업데이트하고, 식당 상세 모달, 달력 뷰, 식당 카드 및 검색 필터에서 주문 메뉴가 일관되게 표시되도록 통일했습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.5.0",
     date: "2026년 8월 31일",
     title: "노션 점심 방문 달력 뷰(Calendar View) 공식 출시 📅",

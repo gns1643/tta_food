@@ -26,7 +26,7 @@ export default function EditReviewModal({
   const [visitDate, setVisitDate] = useState("");
   const [rating, setRating] = useState<number>(4.0);
   const [shortComment, setShortComment] = useState("");
-  const [recommendedMenu, setRecommendedMenu] = useState("");
+  const [menu, setMenu] = useState("");
   const [detailComment, setDetailComment] = useState("");
   const [revisit, setRevisit] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +38,7 @@ export default function EditReviewModal({
       setVisitDate(review.visitDate || new Date().toISOString().split("T")[0]);
       setRating(review.rating ?? 4.0);
       setShortComment(review.shortComment || "");
-      setRecommendedMenu(review.recommendedMenu || "");
+      setMenu(review.menu || review.recommendedMenu || "");
       setDetailComment(review.detailComment || "");
       setRevisit(Boolean(review.revisit));
     }
@@ -69,7 +69,7 @@ export default function EditReviewModal({
           rating,
           shortComment: shortComment.trim(),
           detailComment: detailComment.trim(),
-          recommendedMenu: recommendedMenu.trim(),
+          menu: menu.trim(),
           revisit,
         }),
       });
@@ -86,7 +86,8 @@ export default function EditReviewModal({
         rating,
         shortComment: shortComment.trim(),
         detailComment: detailComment.trim(),
-        recommendedMenu: recommendedMenu.trim(),
+        menu: menu.trim(),
+        recommendedMenu: menu.trim(),
         revisit,
       });
     } catch (err: any) {
@@ -237,16 +238,16 @@ export default function EditReviewModal({
             />
           </div>
 
-          {/* Recommended Menu */}
+          {/* Ordered Menu */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-              추천 메뉴
+              주문 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(이번 방문에서 먹은 메뉴)</span>
             </label>
             <input
               type="text"
-              placeholder="예: 얼큰 순대국, 안심 돈가스"
-              value={recommendedMenu}
-              onChange={(e) => setRecommendedMenu(e.target.value)}
+              placeholder="예: 얼큰 순대국, 안심 돈가스, 삼겹살..."
+              value={menu}
+              onChange={(e) => setMenu(e.target.value)}
               className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500"
             />
           </div>

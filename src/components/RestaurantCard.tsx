@@ -121,10 +121,10 @@ export default function RestaurantCard({
           )}
         </div>
 
-        {/* Recommended Menu Tags */}
-        {restaurant.recommendedMenus.length > 0 && (
+        {/* Menu Tags */}
+        {(restaurant.menus || restaurant.recommendedMenus || []).length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {restaurant.recommendedMenus.slice(0, 3).map((menu, idx) => (
+            {(restaurant.menus || restaurant.recommendedMenus || []).slice(0, 3).map((menu, idx) => (
               <span
                 key={idx}
                 className="inline-flex items-center text-xs bg-orange-50/80 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded-md font-medium border border-orange-100 dark:border-orange-900/60"

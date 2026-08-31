@@ -165,9 +165,9 @@ export default function StatsView({ onOpenDetail, onOpenAddReview }: StatsViewPr
                 <span className="font-black text-xl text-amber-900 dark:text-amber-200">{top1.avgRating.toFixed(1)}</span>
                 <span className="text-xs text-amber-800 dark:text-amber-300 font-medium">/ 5.0 (평론 {top1.reviewCount}개)</span>
               </div>
-              {top1.recommendedMenus[0] && (
+              {(top1.menus?.[0] || top1.recommendedMenus?.[0]) && (
                 <div className="mt-3 text-xs text-amber-900 dark:text-amber-300 font-medium">
-                  대표 메뉴: <span className="font-bold">{top1.recommendedMenus[0]}</span>
+                  주요 주문 메뉴: <span className="font-bold">{top1.menus?.[0] || top1.recommendedMenus?.[0]}</span>
                 </div>
               )}
             </div>

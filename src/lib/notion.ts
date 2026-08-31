@@ -62,7 +62,11 @@ export async function fetchAllData(forceRefresh = false): Promise<{
       const rating = typeof props["별점"]?.number === "number" ? props["별점"]?.number : null;
       const shortComment = props["한줄평"]?.rich_text?.[0]?.plain_text || "";
       const detailComment = props["상세 평론"]?.rich_text?.[0]?.plain_text || "";
-      const recommendedMenu = props["추천 메뉴"]?.rich_text?.[0]?.plain_text || "";
+      const menu =
+        props["주문 메뉴"]?.rich_text?.[0]?.plain_text ||
+        props["메뉴"]?.rich_text?.[0]?.plain_text ||
+        props["추천 메뉴"]?.rich_text?.[0]?.plain_text ||
+        "";
       const revisit = Boolean(props["재방문?"]?.checkbox);
       const restaurantRelations = props["음식점"]?.relation || [];
       const restaurantId = restaurantRelations[0]?.id || "";
@@ -76,7 +80,8 @@ export async function fetchAllData(forceRefresh = false): Promise<{
         rating,
         shortComment,
         detailComment,
-        recommendedMenu,
+        menu,
+        recommendedMenu: menu, // 하위 호환성 유지
         revisit,
         url: page.url,
       };
@@ -85,7 +90,7 @@ export async function fetchAllData(forceRefresh = false): Promise<{
       const hasRating = r.rating !== null && r.rating > 0;
       const hasShort = r.shortComment.trim().length > 0;
       const hasDetail = r.detailComment.trim().length > 0;
-      const hasMenu = r.recommendedMenu.trim().length > 0;
+      const hasMenu = r.menu.trim().length > 0;
       return hasRating || hasShort || hasDetail || hasMenu;
     });
 
@@ -133,15 +138,15 @@ export async function fetchAllData(forceRefresh = false): Promise<{
 
     const authorScores: Record<string, number | null> = {};
     const authorComments: Record<string, string> = {};
-    const recommendedMenus: string[] = [];
+    const menus: string[] = [];
 
     restReviews.forEach((r) => {
       if (r.author) {
         if (r.rating !== null) authorScores[r.author] = r.rating;
         if (r.shortComment) authorComments[r.author] = r.shortComment;
       }
-      if (r.recommendedMenu && !recommendedMenus.includes(r.recommendedMenu)) {
-        recommendedMenus.push(r.recommendedMenu);
+      if (r.menu && !menus.includes(r.menu)) {
+        menus.push(r.menu);
       }
     });
 
@@ -158,7 +163,8 @@ export async function fetchAllData(forceRefresh = false): Promise<{
       revisitRate,
       authorScores,
       authorComments,
-      recommendedMenus,
+      menus,
+      recommendedMenus: menus, // 하위 호환성 유지
       url: page.url,
       createdAt: page.created_time,
     };
@@ -225,6 +231,7 @@ export async function createRestaurant(input: CreateRestaurantInput): Promise<Re
     revisitRate: 0,
     authorScores: {},
     authorComments: {},
+    menus: [],
     recommendedMenus: [],
     url: response.url,
     createdAt: response.created_time,
@@ -236,6 +243,7 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
   const targetRest = restaurants.find((r) => r.id === input.restaurantId);
   const restName = targetRest?.name || "음식점";
   const title = `${restName} - ${input.author}`;
+  const menuValue = (input.menu ?? input.recommendedMenu ?? "").trim();
 
   const properties: any = {
     "제목": {
@@ -309,12 +317,12 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
     };
   }
 
-  if (input.recommendedMenu) {
-    properties["추천 메뉴"] = {
+  if (menuValue) {
+    properties["주문 메뉴"] = {
       rich_text: [
         {
           text: {
-            content: input.recommendedMenu,
+            content: menuValue,
           },
         },
       ],
@@ -338,7 +346,8 @@ export async function createReview(input: CreateReviewInput): Promise<Review> {
     rating: input.rating ?? null,
     shortComment: input.shortComment || "",
     detailComment: input.detailComment || "",
-    recommendedMenu: input.recommendedMenu || "",
+    menu: menuValue,
+    recommendedMenu: menuValue,
     revisit: Boolean(input.revisit),
     url: response.url,
   };
@@ -353,6 +362,7 @@ export async function updateReview(
     rating?: number;
     shortComment?: string;
     detailComment?: string;
+    menu?: string;
     recommendedMenu?: string;
     revisit?: boolean;
   }
@@ -405,12 +415,13 @@ export async function updateReview(
     };
   }
 
-  if (input.recommendedMenu !== undefined) {
-    properties["추천 메뉴"] = {
+  const menuInput = input.menu !== undefined ? input.menu : input.recommendedMenu;
+  if (menuInput !== undefined) {
+    properties["주문 메뉴"] = {
       rich_text: [
         {
           text: {
-            content: input.recommendedMenu,
+            content: menuInput,
           },
         },
       ],
@@ -430,6 +441,13 @@ export async function updateReview(
 
   invalidateCache();
 
+  const finalMenu =
+    menuInput ??
+    response.properties["주문 메뉴"]?.rich_text?.[0]?.plain_text ??
+    response.properties["메뉴"]?.rich_text?.[0]?.plain_text ??
+    response.properties["추천 메뉴"]?.rich_text?.[0]?.plain_text ??
+    "";
+
   return {
     id: response.id,
     title: response.properties["제목"]?.title?.[0]?.plain_text || "",
@@ -439,7 +457,8 @@ export async function updateReview(
     rating: input.rating ?? response.properties["별점"]?.number ?? null,
     shortComment: input.shortComment ?? "",
     detailComment: input.detailComment ?? "",
-    recommendedMenu: input.recommendedMenu ?? "",
+    menu: finalMenu,
+    recommendedMenu: finalMenu,
     revisit: Boolean(input.revisit),
     url: response.url,
   };

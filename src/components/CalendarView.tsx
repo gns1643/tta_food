@@ -695,9 +695,9 @@ export default function CalendarView({
                           )}
                         </div>
 
-                        {rev.recommendedMenu && (
+                        {(rev.menu || rev.recommendedMenu) && (
                           <div className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                            🍲 추천 메뉴: <span className="font-bold text-slate-900 dark:text-white">{rev.recommendedMenu}</span>
+                            🍲 주문 메뉴: <span className="font-bold text-slate-900 dark:text-white">{rev.menu || rev.recommendedMenu}</span>
                           </div>
                         )}
 

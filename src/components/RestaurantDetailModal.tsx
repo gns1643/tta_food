@@ -232,12 +232,12 @@ export default function RestaurantDetailModal({
                     </div>
                   )}
 
-                  {/* Recommended Menu */}
-                  {review.recommendedMenu && (
+                  {/* Ordered Menu */}
+                  {(review.menu || review.recommendedMenu) && (
                     <div className="mt-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center space-x-1.5">
-                      <span className="font-bold text-orange-600 dark:text-orange-400">추천 메뉴:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">주문 메뉴:</span>
                       <span className="bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded font-medium">
-                        {review.recommendedMenu}
+                        {review.menu || review.recommendedMenu}
                       </span>
                     </div>
                   )}

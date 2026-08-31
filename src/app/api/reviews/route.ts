@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       rating: typeof body.rating === "number" ? body.rating : undefined,
       shortComment: body.shortComment,
       detailComment: body.detailComment,
-      recommendedMenu: body.recommendedMenu,
+      menu: body.menu ?? body.recommendedMenu,
       revisit: Boolean(body.revisit),
     });
 
@@ -79,7 +79,7 @@ export async function PUT(req: Request) {
       rating: typeof body.rating === "number" ? body.rating : undefined,
       shortComment: body.shortComment,
       detailComment: body.detailComment,
-      recommendedMenu: body.recommendedMenu,
+      menu: body.menu ?? body.recommendedMenu,
       revisit: typeof body.revisit === "boolean" ? body.revisit : undefined,
     });
 
