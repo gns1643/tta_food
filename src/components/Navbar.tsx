@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { UtensilsCrossed, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon } from "lucide-react";
+import { UtensilsCrossed, Calendar, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon } from "lucide-react";
 
 interface NavbarProps {
-  activeTab: "list" | "stats" | "patchnotes";
-  setActiveTab: (tab: "list" | "stats" | "patchnotes") => void;
+  activeTab: "list" | "calendar" | "stats" | "patchnotes";
+  setActiveTab: (tab: "list" | "calendar" | "stats" | "patchnotes") => void;
   onOpenAddRestaurant: () => void;
   onOpenAddReview: (restaurantId?: string) => void;
   onRefresh: () => void;
@@ -78,6 +78,17 @@ export default function Navbar({
             >
               <UtensilsCrossed className="w-4 h-4" />
               <span>음식점 목록</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("calendar")}
+              className={`flex items-center space-x-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
+                activeTab === "calendar"
+                  ? "bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>달력 뷰</span>
             </button>
             <button
               onClick={() => setActiveTab("stats")}
@@ -202,7 +213,18 @@ export default function Navbar({
             }`}
           >
             <UtensilsCrossed className="w-3.5 h-3.5" />
-            <span>음식점 목록</span>
+            <span>목록</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("calendar")}
+            className={`flex items-center space-x-1 text-xs font-medium py-1 px-2.5 rounded-lg ${
+              activeTab === "calendar"
+                ? "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 font-bold"
+                : "text-slate-600 dark:text-slate-400"
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            <span>달력</span>
           </button>
           <button
             onClick={() => setActiveTab("stats")}
@@ -213,7 +235,7 @@ export default function Navbar({
             }`}
           >
             <Trophy className="w-3.5 h-3.5" />
-            <span>랭킹 & 통계</span>
+            <span>랭킹</span>
           </button>
           <button
             onClick={() => setActiveTab("patchnotes")}

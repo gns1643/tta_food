@@ -10,6 +10,7 @@ interface AddReviewModalProps {
   onClose: () => void;
   restaurants: Restaurant[];
   initialRestaurantId?: string;
+  initialVisitDate?: string;
   defaultAuthor?: string;
   onSuccess: (newReview: Review) => void;
 }
@@ -22,6 +23,7 @@ export default function AddReviewModal({
   onClose,
   restaurants,
   initialRestaurantId,
+  initialVisitDate,
   defaultAuthor = "지훈",
   onSuccess,
 }: AddReviewModalProps) {
@@ -29,7 +31,9 @@ export default function AddReviewModal({
   const [author, setAuthor] = useState(defaultAuthor || "지훈");
   const [customAuthor, setCustomAuthor] = useState("");
   const [isCustomAuthor, setIsCustomAuthor] = useState(false);
-  const [visitDate, setVisitDate] = useState(new Date().toISOString().split("T")[0]);
+  const [visitDate, setVisitDate] = useState(
+    initialVisitDate || new Date().toISOString().split("T")[0]
+  );
   const [rating, setRating] = useState<number>(4.0);
   const [shortComment, setShortComment] = useState("");
   const [recommendedMenu, setRecommendedMenu] = useState("");
@@ -45,6 +49,12 @@ export default function AddReviewModal({
       setRestaurantId(restaurants[0].id);
     }
   }, [initialRestaurantId, restaurants]);
+
+  useEffect(() => {
+    if (initialVisitDate) {
+      setVisitDate(initialVisitDate);
+    }
+  }, [initialVisitDate, isOpen]);
 
   useEffect(() => {
     if (defaultAuthor) {

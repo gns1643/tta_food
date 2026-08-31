@@ -9,6 +9,7 @@ import AddRestaurantModal from "@/components/AddRestaurantModal";
 import AddReviewModal from "@/components/AddReviewModal";
 import EditReviewModal from "@/components/EditReviewModal";
 import StatsView from "@/components/StatsView";
+import CalendarView from "@/components/CalendarView";
 import PatchNotesView from "@/components/PatchNotesView";
 import { Restaurant, Review } from "@/types";
 
@@ -17,7 +18,7 @@ const CATEGORY_FILTER_LIST = ["전체", "한식", "일식", "중식", "양식", 
 const INTERN_FILTER_LIST = ["전체", "지훈", "준협", "윤섭", "동찬"];
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<"list" | "stats" | "patchnotes">("list");
+  const [activeTab, setActiveTab] = useState<"list" | "calendar" | "stats" | "patchnotes">("list");
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -47,6 +48,9 @@ export default function HomePage() {
     restaurantName: string;
   } | null>(null);
   const [reviewTargetRestaurantId, setReviewTargetRestaurantId] = useState<string | undefined>(
+    undefined
+  );
+  const [reviewTargetVisitDate, setReviewTargetVisitDate] = useState<string | undefined>(
     undefined
   );
   const [toastMessage, setToastMessage] = useState("");
@@ -109,8 +113,9 @@ export default function HomePage() {
     }
   };
 
-  const handleOpenAddReview = (restaurantId?: string) => {
+  const handleOpenAddReview = (restaurantId?: string, visitDate?: string) => {
     setReviewTargetRestaurantId(restaurantId);
+    setReviewTargetVisitDate(visitDate);
     setIsAddReviewOpen(true);
   };
 
@@ -262,6 +267,13 @@ export default function HomePage() {
           <StatsView
             onOpenDetail={(r) => setSelectedRestaurantForDetail(r)}
             onOpenAddReview={handleOpenAddReview}
+          />
+        ) : activeTab === "calendar" ? (
+          <CalendarView
+            restaurants={restaurants}
+            onOpenDetail={(r) => setSelectedRestaurantForDetail(r)}
+            onOpenAddReview={handleOpenAddReview}
+            currentUser={currentUser}
           />
         ) : (
           <div className="space-y-6">
@@ -435,9 +447,13 @@ export default function HomePage() {
 
       <AddReviewModal
         isOpen={isAddReviewOpen}
-        onClose={() => setIsAddReviewOpen(false)}
+        onClose={() => {
+          setIsAddReviewOpen(false);
+          setReviewTargetVisitDate(undefined);
+        }}
         restaurants={restaurants}
         initialRestaurantId={reviewTargetRestaurantId}
+        initialVisitDate={reviewTargetVisitDate}
         defaultAuthor={currentUser}
         onSuccess={handleReviewCreated}
       />

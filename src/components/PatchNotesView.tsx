@@ -18,6 +18,33 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.5.0",
+    date: "2026년 8월 31일",
+    title: "노션 점심 방문 달력 뷰(Calendar View) 공식 출시 📅",
+    tag: "대규모 업데이트",
+    tagColor: "bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800",
+    changes: [
+      {
+        type: "feature",
+        title: "월별 인터랙티브 달력 뷰 추가",
+        description:
+          "기존 노션에서 보던 방문일 기준 캘린더를 웹사이트에서 그대로 확인하고 탐색할 수 있는 '달력 뷰' 탭이 신설되었습니다. 날짜별로 방문한 식당, 작성자별 컬러 뱃지, 별점을 한눈에 파악할 수 있습니다.",
+      },
+      {
+        type: "feature",
+        title: "날짜별 평론 즉시 등록 & 식당 상세 연동",
+        description:
+          "달력의 특정 날짜나 '+' 버튼을 클릭하면 해당 날짜가 기본 설정된 평론 작성 모달이 즉시 열리며, 달력의 식당 카드를 클릭하면 식당 상세 정보와 모든 평론을 바로 조회할 수 있습니다.",
+      },
+      {
+        type: "feature",
+        title: "월간 방문 통계 & 인턴/건물 필터링",
+        description:
+          "해당 월의 총 방문 횟수, 평균 별점, 이달의 최다 방문 식당 요약 정보를 제공하며, 인턴(지훈/준협/윤섭/동찬) 및 건물별로 필터링하여 맞춤 캘린더를 확인할 수 있습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.4.1",
     date: "2026년 8월 27일",
     title: "기본 정렬 기준 '최신순'으로 변경 📅",
