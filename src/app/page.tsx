@@ -465,6 +465,7 @@ export default function HomePage() {
         onClose={() => setIsEditReviewOpen(false)}
         review={editingReviewData?.review || null}
         restaurantName={editingReviewData?.restaurantName}
+        restaurants={restaurants}
         onSuccess={handleReviewUpdated}
       />
     </div>

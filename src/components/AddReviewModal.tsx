@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, Star, Calendar, Utensils, ThumbsUp, Sparkles, Loader2, User } from "lucide-react";
 import confetti from "canvas-confetti";
+import MenuCombobox from "./MenuCombobox";
 import { Restaurant, Review } from "@/types";
 
 interface AddReviewModalProps {
@@ -41,6 +42,32 @@ export default function AddReviewModal({
   const [revisit, setRevisit] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const selectedRestaurant = useMemo(() => {
+    return restaurants.find((r) => r.id === restaurantId);
+  }, [restaurants, restaurantId]);
+
+  const availableMenus = useMemo(() => {
+    if (!selectedRestaurant) return [];
+    const set = new Set<string>();
+    if (Array.isArray(selectedRestaurant.menus)) {
+      selectedRestaurant.menus.forEach((m) => {
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    if (Array.isArray(selectedRestaurant.recommendedMenus)) {
+      selectedRestaurant.recommendedMenus.forEach((m) => {
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    if (Array.isArray(selectedRestaurant.reviews)) {
+      selectedRestaurant.reviews.forEach((r) => {
+        const m = r.menu || r.recommendedMenu;
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    return Array.from(set);
+  }, [selectedRestaurant]);
 
   useEffect(() => {
     if (initialRestaurantId) {
@@ -321,17 +348,17 @@ export default function AddReviewModal({
             />
           </div>
 
-          {/* Ordered Menu */}
+          {/* Ordered Menu (Combobox with previous menus) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-              주문 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(이번 방문에서 먹은 메뉴)</span>
+              주문 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(이전 주문 메뉴 선택 또는 직접 입력)</span>
             </label>
-            <input
-              type="text"
-              placeholder="예: 얼큰 순대국, 안심 돈가스, 마라탕..."
+            <MenuCombobox
               value={menu}
-              onChange={(e) => setMenu(e.target.value)}
-              className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500"
+              onChange={setMenu}
+              availableMenus={availableMenus}
+              placeholder="예: 얼큰 순대국, 안심 돈가스, 마라탕..."
+              accentColor="orange"
             />
           </div>
 

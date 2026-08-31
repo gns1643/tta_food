@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, Star, Calendar, Utensils, ThumbsUp, Sparkles, Loader2, Edit3 } from "lucide-react";
-import { Review } from "@/types";
+import MenuCombobox from "./MenuCombobox";
+import { Review, Restaurant } from "@/types";
 
 interface EditReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   review: Review | null;
   restaurantName?: string;
+  restaurants?: Restaurant[];
   onSuccess: (updatedReview: Review) => void;
 }
 
@@ -20,6 +22,7 @@ export default function EditReviewModal({
   onClose,
   review,
   restaurantName,
+  restaurants = [],
   onSuccess,
 }: EditReviewModalProps) {
   const [author, setAuthor] = useState("지훈");
@@ -31,6 +34,37 @@ export default function EditReviewModal({
   const [revisit, setRevisit] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const targetRestaurant = useMemo(() => {
+    if (!review) return null;
+    return (
+      restaurants.find((r) => r.id === review.restaurantId) ||
+      restaurants.find((r) => r.name === restaurantName) ||
+      null
+    );
+  }, [restaurants, review, restaurantName]);
+
+  const availableMenus = useMemo(() => {
+    if (!targetRestaurant) return [];
+    const set = new Set<string>();
+    if (Array.isArray(targetRestaurant.menus)) {
+      targetRestaurant.menus.forEach((m) => {
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    if (Array.isArray(targetRestaurant.recommendedMenus)) {
+      targetRestaurant.recommendedMenus.forEach((m) => {
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    if (Array.isArray(targetRestaurant.reviews)) {
+      targetRestaurant.reviews.forEach((r) => {
+        const m = r.menu || r.recommendedMenu;
+        if (m && m.trim()) set.add(m.trim());
+      });
+    }
+    return Array.from(set);
+  }, [targetRestaurant]);
 
   useEffect(() => {
     if (review) {
@@ -238,17 +272,17 @@ export default function EditReviewModal({
             />
           </div>
 
-          {/* Ordered Menu */}
+          {/* Ordered Menu (Combobox with previous menus) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-              주문 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(이번 방문에서 먹은 메뉴)</span>
+              주문 메뉴 <span className="text-slate-400 dark:text-slate-500 font-normal">(이전 주문 메뉴 선택 또는 직접 입력)</span>
             </label>
-            <input
-              type="text"
-              placeholder="예: 얼큰 순대국, 안심 돈가스, 삼겹살..."
+            <MenuCombobox
               value={menu}
-              onChange={(e) => setMenu(e.target.value)}
-              className="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500"
+              onChange={setMenu}
+              availableMenus={availableMenus}
+              placeholder="예: 얼큰 순대국, 안심 돈가스, 삼겹살..."
+              accentColor="blue"
             />
           </div>
 

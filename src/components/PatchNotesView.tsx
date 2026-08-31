@@ -18,6 +18,21 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.5.2",
+    date: "2026년 8월 31일",
+    title: "주문 메뉴 이전 주문 기록 기반 콤보박스(Combobox) 지원 🍲",
+    tag: "UX 개선",
+    tagColor: "bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    changes: [
+      {
+        type: "feature",
+        title: "이전 주문 메뉴 콤보박스 및 빠른 선택 칩 제공",
+        description:
+          "평론 작성 및 수정 시 해당 음식점에서 인턴들이 이전에 주문했던 메뉴 목록이 콤보박스 드롭다운과 하단 빠른 선택 버튼(칩)으로 표시됩니다. 클릭 한 번으로 이전 메뉴를 즉시 선택하거나 새로운 메뉴를 자유롭게 타이핑할 수 있습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.5.1",
     date: "2026년 8월 31일",
     title: "평론별 '주문 메뉴' 등록 체계 통일 및 노션 DB 개편 🍽️",
