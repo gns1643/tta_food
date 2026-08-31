@@ -514,3 +514,134 @@ export async function getStats(): Promise<Stats> {
     revisitTopRestaurants,
   };
 }
+
+const NOTION_SUGGESTION_DB_ID =
+  process.env.NOTION_SUGGESTION_DB_ID || "3cd2e712-ccaf-812b-a89f-ff559f1a4fe3";
+
+export interface NotionSuggestion {
+  id: string;
+  author: string;
+  type: "feature" | "design" | "fix" | "other";
+  title: string;
+  content: string;
+  status: "pending" | "in_progress" | "completed";
+  patchVersion?: string;
+  createdAt: string;
+}
+
+export async function fetchSuggestionsFromNotion(): Promise<NotionSuggestion[]> {
+  try {
+    const response: any = await notion.databases.query({
+      database_id: NOTION_SUGGESTION_DB_ID,
+      sorts: [{ timestamp: "created_time", direction: "descending" }],
+    });
+
+    return response.results.map((page: any) => {
+      const props = page.properties;
+      const title = props["제안 제목"]?.title?.[0]?.plain_text || "";
+      const author = props["작성자"]?.select?.name || "익명";
+      const typeRaw = props["유형"]?.select?.name || "기능 제안";
+      const statusRaw = props["상태"]?.select?.name || "접수 완료";
+      const content = props["상세 내용"]?.rich_text?.[0]?.plain_text || "";
+      const patchVersion = props["반영 버전"]?.rich_text?.[0]?.plain_text || "";
+
+      let type: "feature" | "design" | "fix" | "other" = "feature";
+      if (typeRaw.includes("UI") || typeRaw.includes("디자인")) type = "design";
+      else if (typeRaw.includes("버그")) type = "fix";
+      else if (typeRaw.includes("기타")) type = "other";
+
+      let status: "pending" | "in_progress" | "completed" = "pending";
+      if (statusRaw.includes("완료") || statusRaw.includes("적용")) status = "completed";
+      else if (statusRaw.includes("진행")) status = "in_progress";
+
+      return {
+        id: page.id,
+        author,
+        type,
+        title,
+        content,
+        status,
+        patchVersion: patchVersion || undefined,
+        createdAt: page.created_time,
+      };
+    });
+  } catch (error) {
+    console.error("fetchSuggestionsFromNotion error:", error);
+    return [];
+  }
+}
+
+export async function createSuggestionInNotion(input: {
+  author: string;
+  type?: string;
+  title: string;
+  content?: string;
+}): Promise<NotionSuggestion> {
+  const typeMap: Record<string, string> = {
+    feature: "기능 제안",
+    design: "UI/디자인",
+    fix: "버그 제보",
+    other: "기타 의견",
+  };
+
+  const response: any = await notion.pages.create({
+    parent: { database_id: NOTION_SUGGESTION_DB_ID },
+    properties: {
+      "제안 제목": {
+        title: [{ text: { content: input.title } }],
+      },
+      "작성자": {
+        select: { name: input.author },
+      },
+      "유형": {
+        select: { name: typeMap[input.type || "feature"] || "기능 제안" },
+      },
+      "상세 내용": {
+        rich_text: input.content ? [{ text: { content: input.content } }] : [],
+      },
+      "상태": {
+        select: { name: "접수 완료" },
+      },
+    },
+  });
+
+  return {
+    id: response.id,
+    author: input.author,
+    type: (input.type as any) || "feature",
+    title: input.title,
+    content: input.content || "",
+    status: "pending",
+    createdAt: response.created_time,
+  };
+}
+
+export async function updateSuggestionInNotion(
+  id: string,
+  status?: string,
+  patchVersion?: string
+) {
+  const properties: any = {};
+  if (status) {
+    const statusMap: Record<string, string> = {
+      pending: "접수 완료",
+      in_progress: "개발 진행 중",
+      completed: "적용 완료",
+    };
+    properties["상태"] = {
+      select: { name: statusMap[status] || status },
+    };
+  }
+  if (patchVersion) {
+    properties["반영 버전"] = {
+      rich_text: [{ text: { content: patchVersion } }],
+    };
+  }
+
+  const response: any = await notion.pages.update({
+    page_id: id,
+    properties,
+  });
+
+  return response;
+}
