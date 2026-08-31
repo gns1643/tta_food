@@ -296,7 +296,7 @@ export default function PatchNotesView({ onOpenSuggestion }: { onOpenSuggestion?
       default:
         return (
           <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            <span>접수됨 (스케줄 대기) ⏳</span>
+            <span>접수 완료 ⏳</span>
           </span>
         );
     }

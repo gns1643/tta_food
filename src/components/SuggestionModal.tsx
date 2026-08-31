@@ -121,7 +121,7 @@ export default function SuggestionModal({
           </div>
           <h2 className="text-xl font-black">인턴 아이디어 & 기능 제안 💡</h2>
           <p className="text-xs text-orange-100 mt-1">
-            남겨주신 의견은 정기 스케줄러가 자동 확인 후 코드로 구현하여 배포합니다!
+            남겨주신 의견은 검토 후 코드로 구현하여 사이트에 빠르게 반영됩니다!
           </p>
         </div>
 
@@ -238,9 +238,9 @@ export default function SuggestionModal({
 
           {/* Automatic Processing Info Banner */}
           <div className="bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/50 p-3.5 rounded-2xl flex items-start space-x-2.5 text-xs text-amber-900 dark:text-amber-200">
-            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+            <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
             <div className="leading-relaxed">
-              <strong className="font-bold">자동 스케줄러 연동</strong>: 등록된 제안은 정해진 스케줄마다 자동으로 검토·개발되어 Git에 푸시되고, 패치노트에 작성자 이름과 함께 기록됩니다!
+              <strong className="font-bold">아이디어 개발 반영</strong>: 등록된 제안은 검토를 거쳐 실제 코드로 개발·배포되며, 패치노트에 제안자 이름과 함께 공식 기록됩니다!
             </div>
           </div>
 
