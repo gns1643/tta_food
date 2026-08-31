@@ -30,7 +30,7 @@ export default function RestaurantDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="p-6 bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 dark:from-slate-850 dark:via-slate-900 dark:to-orange-950/20 border-b border-slate-100 dark:border-slate-800 relative">
+        <div className="p-6 bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-orange-950/20 border-b border-slate-100 dark:border-slate-800 relative">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition"

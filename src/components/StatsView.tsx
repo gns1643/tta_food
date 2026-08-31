@@ -148,7 +148,7 @@ export default function StatsView({ onOpenDetail, onOpenAddReview }: StatsViewPr
             {/* 1st Place (Winner) */}
             <div
               onClick={() => onOpenDetail(top1)}
-              className="order-1 md:order-2 bg-gradient-to-b from-amber-50 to-white dark:from-slate-800 dark:to-slate-850 p-6 rounded-3xl border-2 border-amber-400 dark:border-amber-500 shadow-xl relative -mt-4 hover:shadow-2xl transition cursor-pointer"
+              className="order-1 md:order-2 bg-gradient-to-b from-amber-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-3xl border-2 border-amber-400 dark:border-amber-500 shadow-xl relative -mt-4 hover:shadow-2xl transition cursor-pointer"
             >
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 px-3 py-0.5 rounded-full text-xs font-black shadow">
                 👑 1위 BEST

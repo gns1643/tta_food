@@ -450,7 +450,7 @@ export default function CalendarView({
       {/* 3. Calendar Grid Section */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Weekday Header */}
-        <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-850/50 text-center py-2.5">
+        <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 text-center py-2.5">
           {WEEKDAYS.map((day, idx) => (
             <div
               key={day}
@@ -702,7 +702,7 @@ export default function CalendarView({
                         )}
 
                         {rev.shortComment && (
-                          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium italic bg-slate-50 dark:bg-slate-850 p-2 rounded-lg">
+                          <p className="text-xs text-slate-700 dark:text-slate-200 font-medium italic bg-slate-100/80 dark:bg-slate-900/90 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/70">
                             &ldquo;{rev.shortComment}&rdquo;
                           </p>
                         )}
