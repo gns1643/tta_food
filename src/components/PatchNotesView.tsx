@@ -235,7 +235,22 @@ const PATCH_HISTORY: PatchItem[] = [
   },
 ];
 
-export default function PatchNotesView() {
+export default function PatchNotesView({ onOpenSuggestion }: { onOpenSuggestion?: () => void }) {
+  const [suggestions, setSuggestions] = React.useState<any[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch("/api/suggestions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setSuggestions(data.data);
+        }
+      })
+      .catch((err) => console.error("Failed to load suggestions:", err))
+      .finally(() => setLoadingSuggestions(false));
+  }, []);
+
   const getTypeBadge = (type: "feature" | "design" | "fix") => {
     switch (type) {
       case "feature":
@@ -262,22 +277,120 @@ export default function PatchNotesView() {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "completed":
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            <span>적용 완료 🎉</span>
+          </span>
+        );
+      case "in_progress":
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 animate-pulse">
+            <Wrench className="w-3 h-3 text-blue-600" />
+            <span>개발 진행 중 🛠️</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <span>접수됨 (스케줄 대기) ⏳</span>
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-16 animate-in fade-in duration-300">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-orange-500/10 relative overflow-hidden">
-        <div className="relative z-10">
-          <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md mb-3">
-            <History className="w-3.5 h-3.5" />
-            <span>업데이트 히스토리</span>
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black">TTA 맛집 평론 패치노트</h2>
-          <p className="text-xs sm:text-sm text-orange-100 mt-2 max-w-xl leading-relaxed">
-            인턴분들의 더 즐거운 점심 식사를 위해 지속적으로 업데이트되고 있습니다. 새롭게 추가된 기능과 개선 사항을 날짜순으로 확인해 보세요!
-          </p>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md mb-3">
+              <History className="w-3.5 h-3.5" />
+              <span>업데이트 히스토리 & 제안 현황</span>
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black">TTA 맛집 평론 패치노트</h2>
+            <p className="text-xs sm:text-sm text-orange-100 mt-2 max-w-xl leading-relaxed">
+              인턴분들의 의견과 제안을 정기 스케줄러가 자동으로 확인하여 개발·배포하고 있습니다. 새로운 아이디어를 남겨주세요!
+            </p>
+          </div>
+
+          {onOpenSuggestion && (
+            <button
+              onClick={onOpenSuggestion}
+              className="self-start sm:self-auto px-4 py-2.5 bg-white text-orange-600 hover:bg-orange-50 font-bold text-xs sm:text-sm rounded-2xl shadow-md transition transform active:scale-95 flex items-center space-x-1.5 shrink-0"
+            >
+              <span>💡 새 아이디어 제안하기</span>
+            </button>
+          )}
         </div>
 
         <div className="absolute -right-6 -bottom-6 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+      </div>
+
+      {/* Intern Suggestions Status Box */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-base font-black text-slate-900 dark:text-white flex items-center space-x-1.5">
+              <span>💡 인턴 아이디어 & 기능 제안 현황</span>
+            </span>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              총 {suggestions.length}건
+            </span>
+          </div>
+
+          {onOpenSuggestion && (
+            <button
+              onClick={onOpenSuggestion}
+              className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline"
+            >
+              + 나도 제안하기
+            </button>
+          )}
+        </div>
+
+        {suggestions.length === 0 ? (
+          <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
+            아직 등록된 제안이 없습니다. 상단의 &lsquo;제안하기&rsquo; 버튼으로 첫 의견을 남겨보세요!
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {suggestions.map((sug) => (
+              <div
+                key={sug.id}
+                className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700 space-y-2 flex flex-col justify-between"
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
+                      👤 {sug.author}
+                    </span>
+                    {getStatusBadge(sug.status)}
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">
+                    {sug.title}
+                  </h4>
+                  {sug.content && (
+                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                      {sug.content}
+                    </p>
+                  )}
+                </div>
+
+                {sug.patchVersion && (
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+                    <span>반영 버전</span>
+                    <span className="font-bold text-orange-600 dark:text-orange-400">{sug.patchVersion}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Timeline List */}

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { UtensilsCrossed, Calendar, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon } from "lucide-react";
+import { UtensilsCrossed, Calendar, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon, Lightbulb } from "lucide-react";
 
 interface NavbarProps {
   activeTab: "list" | "calendar" | "stats" | "patchnotes";
   setActiveTab: (tab: "list" | "calendar" | "stats" | "patchnotes") => void;
   onOpenAddRestaurant: () => void;
   onOpenAddReview: (restaurantId?: string) => void;
+  onOpenSuggestion: () => void;
   onRefresh: () => void;
   isRefreshing: boolean;
   currentUser: string;
@@ -23,6 +24,7 @@ export default function Navbar({
   setActiveTab,
   onOpenAddRestaurant,
   onOpenAddReview,
+  onOpenSuggestion,
   onRefresh,
   isRefreshing,
   currentUser,
@@ -181,6 +183,17 @@ export default function Navbar({
                 </div>
               )}
             </div>
+
+            {/* Suggestion / Idea Button */}
+            <button
+              onClick={onOpenSuggestion}
+              title="인턴 아이디어 & 기능 제안하기"
+              className="inline-flex items-center space-x-1 px-2.5 sm:px-3 py-2 text-xs font-bold rounded-xl bg-amber-50 dark:bg-amber-950/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 shadow-2xs transition"
+            >
+              <Lightbulb className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+              <span className="hidden sm:inline">제안하기</span>
+              <span className="sm:hidden">제안</span>
+            </button>
 
             {/* Add Restaurant Button */}
             <button

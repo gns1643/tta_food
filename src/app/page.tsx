@@ -11,6 +11,7 @@ import EditReviewModal from "@/components/EditReviewModal";
 import StatsView from "@/components/StatsView";
 import CalendarView from "@/components/CalendarView";
 import PatchNotesView from "@/components/PatchNotesView";
+import SuggestionModal from "@/components/SuggestionModal";
 import { Restaurant, Review } from "@/types";
 
 const BUILDING_TABS = ["전체", "누리꿈", "사보이", "kgit", "기타"];
@@ -43,6 +44,7 @@ export default function HomePage() {
   const [isAddRestaurantOpen, setIsAddRestaurantOpen] = useState(false);
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
   const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
+  const [isSuggestionModalOpen, setIsSuggestionModalOpen] = useState(false);
   const [editingReviewData, setEditingReviewData] = useState<{
     review: Review;
     restaurantName: string;
@@ -254,6 +256,7 @@ export default function HomePage() {
         setActiveTab={setActiveTab}
         onOpenAddRestaurant={() => setIsAddRestaurantOpen(true)}
         onOpenAddReview={handleOpenAddReview}
+        onOpenSuggestion={() => setIsSuggestionModalOpen(true)}
         onRefresh={() => fetchRestaurants(true)}
         isRefreshing={isRefreshing}
         currentUser={currentUser}
@@ -264,7 +267,7 @@ export default function HomePage() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === "patchnotes" ? (
-          <PatchNotesView />
+          <PatchNotesView onOpenSuggestion={() => setIsSuggestionModalOpen(true)} />
         ) : activeTab === "stats" ? (
           <StatsView
             onOpenDetail={(r) => setSelectedRestaurantForDetail(r)}
@@ -467,6 +470,16 @@ export default function HomePage() {
         restaurantName={editingReviewData?.restaurantName}
         restaurants={restaurants}
         onSuccess={handleReviewUpdated}
+      />
+
+      <SuggestionModal
+        isOpen={isSuggestionModalOpen}
+        onClose={() => setIsSuggestionModalOpen(false)}
+        defaultAuthor={currentUser}
+        onSuccess={(newSug) => {
+          setIsSuggestionModalOpen(false);
+          showToast(`💡 ${newSug.author}님의 제안이 접수되었습니다! 다음 정기 스케줄러가 자동 개발합니다.`);
+        }}
       />
     </div>
   );

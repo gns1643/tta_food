@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sug-welcome-001",
+    "author": "지훈",
+    "type": "feature",
+    "title": "식당 검색 및 정렬 기능 고도화",
+    "content": "최신 등록순, 별점순, 평론 많은 순 등으로 다양하게 정렬할 수 있으면 좋겠습니다.",
+    "status": "completed",
+    "patchVersion": "v1.4.1",
+    "createdAt": "2026-08-27T09:00:00.000Z",
+    "completedAt": "2026-08-27T10:30:00.000Z"
+  },
+  {
+    "id": "sug-welcome-002",
+    "author": "준협",
+    "type": "feature",
+    "title": "노션 달력 뷰 웹사이트 연동",
+    "content": "노션에서 날짜별로 보던 캘린더 형태를 웹에서도 날짜별로 바로 볼 수 있으면 좋겠습니다.",
+    "status": "completed",
+    "patchVersion": "v1.5.0",
+    "createdAt": "2026-08-31T09:00:00.000Z",
+    "completedAt": "2026-08-31T14:50:00.000Z"
+  },
+  {
+    "id": "sug-welcome-003",
+    "author": "윤섭",
+    "type": "feature",
+    "title": "이전 주문 메뉴 콤보박스 선택",
+    "content": "평론 작성할 때 이전에 이 식당에서 먹었던 메뉴들을 콤보박스로 쉽게 선택할 수 있게 해주세요.",
+    "status": "completed",
+    "patchVersion": "v1.5.2",
+    "createdAt": "2026-08-31T17:00:00.000Z",
+    "completedAt": "2026-08-31T17:22:00.000Z"
+  }
+]
