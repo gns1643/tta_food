@@ -18,6 +18,33 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.6.1",
+    date: "2026년 9월 3일",
+    title: "랭킹 & 통계 대규모 확장! 인턴 성향 분석, 호불호 격돌, 소울푸드 TOP 6 출시 📊",
+    tag: "통계 개편",
+    tagColor: "bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800",
+    changes: [
+      {
+        type: "feature",
+        title: "인턴 미식 캐릭터 분석 (자비의 산타 vs 냉혹한 고든 램지 & 최애 1픽)",
+        description:
+          "인턴별 평균 평점과 리뷰 수를 분석하여 가장 점수를 후하게 주는 '자비의 산타'와 가장 깐깐한 '고든 램지'를 가려내고, 각 인턴의 영혼의 1픽 맛집 및 미식 스코어보드를 제공합니다.",
+      },
+      {
+        type: "feature",
+        title: "인턴 취향 대격돌(호불호 존) & 만장일치 극찬 맛집",
+        description:
+          "인턴 간 별점 점수차가 가장 커서 평가가 극과 극으로 갈린 호불호 맛집과, 다녀간 전원이 4.2점 이상과 재방문 100%를 준 만장일치 맛집을 한눈에 비교할 수 있습니다.",
+      },
+      {
+        type: "feature",
+        title: "상암 빌딩 미식 대전, 소울푸드 TOP 6, 카테고리 제왕 및 숨은 보석 랭킹",
+        description:
+          "누리꿈/사보이/KGIT 건물별 평균 평점 랭킹, 실제 가장 많이 주문된 점심 메뉴 순위, 음식 종류별 1위 식당, 평점은 높으나 리뷰가 적은 숨겨진 원석과 방문이 뜸해진 맛집까지 총망라했습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.6.0",
     date: "2026년 9월 3일",
     title: "속전속결! 상암 미식 '원판 룰렛(점메추)' 공식 출시 🎡",

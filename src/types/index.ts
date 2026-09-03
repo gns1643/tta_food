@@ -52,6 +52,39 @@ export interface CreateReviewInput {
   revisit?: boolean;
 }
 
+export interface AuthorDetailStat {
+  name: string;
+  reviewCount: number;
+  avgRating: number;
+  revisitRate: number;
+  favoriteRestaurant?: { id: string; name: string; rating: number } | null;
+}
+
+export interface BuildingStat {
+  building: string;
+  restaurantCount: number;
+  avgRating: number;
+  reviewCount: number;
+  topRestaurant?: Restaurant | null;
+}
+
+export interface CategoryChampion {
+  category: string;
+  restaurant: Restaurant;
+}
+
+export interface MenuStat {
+  menu: string;
+  count: number;
+}
+
+export interface ControversialStat {
+  restaurant: Restaurant;
+  maxDiff: number;
+  highest: { author: string; rating: number };
+  lowest: { author: string; rating: number };
+}
+
 export interface Stats {
   totalRestaurants: number;
   totalReviews: number;
@@ -60,4 +93,14 @@ export interface Stats {
   topRestaurants: Restaurant[];
   recentReviews: Review[];
   revisitTopRestaurants: Restaurant[];
+  authorDetails?: AuthorDetailStat[];
+  mostGenerousAuthor?: { name: string; avgRating: number } | null;
+  strictestAuthor?: { name: string; avgRating: number } | null;
+  controversialRestaurants?: ControversialStat[];
+  unanimousRestaurants?: Restaurant[];
+  buildingStats?: BuildingStat[];
+  topMenus?: MenuStat[];
+  categoryChampions?: CategoryChampion[];
+  hiddenGems?: Restaurant[];
+  dormantRestaurants?: Restaurant[];
 }

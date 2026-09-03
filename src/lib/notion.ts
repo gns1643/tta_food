@@ -1,5 +1,16 @@
 import { Client } from "@notionhq/client";
-import { Restaurant, Review, CreateRestaurantInput, CreateReviewInput, Stats } from "@/types";
+import {
+  Restaurant,
+  Review,
+  CreateRestaurantInput,
+  CreateReviewInput,
+  Stats,
+  AuthorDetailStat,
+  BuildingStat,
+  CategoryChampion,
+  MenuStat,
+  ControversialStat,
+} from "@/types";
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -468,26 +479,181 @@ export async function getStats(): Promise<Stats> {
   const { restaurants, reviews } = await fetchAllData(false);
 
   const authorReviewCounts: Record<string, number> = {};
-  const authorRatingSums: Record<string, { sum: number; count: number }> = {};
+  const authorRatingSums: Record<
+    string,
+    { sum: number; count: number; revisitCount: number; reviews: Review[] }
+  > = {};
 
   reviews.forEach((r) => {
     if (!r.author) return;
     authorReviewCounts[r.author] = (authorReviewCounts[r.author] || 0) + 1;
 
+    if (!authorRatingSums[r.author]) {
+      authorRatingSums[r.author] = { sum: 0, count: 0, revisitCount: 0, reviews: [] };
+    }
+    authorRatingSums[r.author].reviews.push(r);
+    if (r.revisit) {
+      authorRatingSums[r.author].revisitCount += 1;
+    }
     if (r.rating !== null && r.rating > 0) {
-      if (!authorRatingSums[r.author]) {
-        authorRatingSums[r.author] = { sum: 0, count: 0 };
-      }
       authorRatingSums[r.author].sum += r.rating;
       authorRatingSums[r.author].count += 1;
     }
   });
 
   const authorAvgRatings: Record<string, number> = {};
+  const authorDetails: AuthorDetailStat[] = [];
+
   Object.keys(authorRatingSums).forEach((author) => {
     const item = authorRatingSums[author];
-    authorAvgRatings[author] = Number((item.sum / item.count).toFixed(1));
+    const avg = item.count > 0 ? Number((item.sum / item.count).toFixed(1)) : 0;
+    authorAvgRatings[author] = avg;
+
+    // Find favorite restaurant for this author
+    let favRest: { id: string; name: string; rating: number } | null = null;
+    const sortedAuthorReviews = [...item.reviews]
+      .filter((rv) => typeof rv.rating === "number" && rv.rating > 0)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+    if (sortedAuthorReviews.length > 0) {
+      const topRv = sortedAuthorReviews[0];
+      const rObj = restaurants.find((r) => r.id === topRv.restaurantId);
+      favRest = {
+        id: topRv.restaurantId,
+        name: rObj?.name || topRv.restaurantName || "식당",
+        rating: topRv.rating || 5,
+      };
+    }
+
+    const revisitRate =
+      item.reviews.length > 0
+        ? Math.round((item.revisitCount / item.reviews.length) * 100)
+        : 0;
+
+    authorDetails.push({
+      name: author,
+      reviewCount: item.reviews.length,
+      avgRating: avg,
+      revisitRate,
+      favoriteRestaurant: favRest,
+    });
   });
+
+  // Sort authorDetails by review count desc
+  authorDetails.sort((a, b) => b.reviewCount - a.reviewCount);
+
+  // Generous vs Strict author
+  const authorsWithReviews = authorDetails.filter((a) => a.reviewCount >= 1);
+  const mostGenerousAuthor =
+    authorsWithReviews.length > 0
+      ? [...authorsWithReviews].sort((a, b) => b.avgRating - a.avgRating)[0]
+      : null;
+  const strictestAuthor =
+    authorsWithReviews.length > 0
+      ? [...authorsWithReviews].sort((a, b) => a.avgRating - b.avgRating)[0]
+      : null;
+
+  // Controversial restaurants (score variance between interns >= 1.0)
+  const controversialRestaurants: ControversialStat[] = [];
+  restaurants.forEach((rest) => {
+    const validReviews = rest.reviews.filter((r) => typeof r.rating === "number" && r.rating > 0);
+    if (validReviews.length >= 2) {
+      const sorted = [...validReviews].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      const highest = sorted[0];
+      const lowest = sorted[sorted.length - 1];
+      const diff = Number(((highest.rating || 0) - (lowest.rating || 0)).toFixed(1));
+      if (diff >= 0.5) {
+        controversialRestaurants.push({
+          restaurant: rest,
+          maxDiff: diff,
+          highest: { author: highest.author, rating: highest.rating || 0 },
+          lowest: { author: lowest.author, rating: lowest.rating || 0 },
+        });
+      }
+    }
+  });
+  controversialRestaurants.sort((a, b) => b.maxDiff - a.maxDiff);
+
+  // Unanimous Praise (>= 2 reviews, all ratings >= 4.0, revisit 100%)
+  const unanimousRestaurants = restaurants
+    .filter((r) => r.reviewCount >= 2 && r.avgRating >= 4.2 && r.revisitRate === 100)
+    .sort((a, b) => b.avgRating - a.avgRating || b.reviewCount - a.reviewCount)
+    .slice(0, 5);
+
+  // Building stats
+  const BUILDING_LIST = ["누리꿈", "사보이", "kgit", "기타"];
+  const buildingStats: BuildingStat[] = BUILDING_LIST.map((bldg) => {
+    const bldgRestaurants = restaurants.filter((r) => {
+      if (bldg === "기타") return !["누리꿈", "사보이", "kgit"].includes(r.building);
+      return r.building === bldg;
+    });
+    const reviewed = bldgRestaurants.filter((r) => r.reviewCount > 0);
+    const avg =
+      reviewed.length > 0
+        ? Number((reviewed.reduce((sum, r) => sum + r.avgRating, 0) / reviewed.length).toFixed(1))
+        : 0;
+    const totalRevCount = bldgRestaurants.reduce((sum, r) => sum + r.reviewCount, 0);
+    const topRest =
+      [...reviewed].sort((a, b) => b.avgRating - a.avgRating || b.reviewCount - a.reviewCount)[0] ||
+      null;
+
+    return {
+      building: bldg,
+      restaurantCount: bldgRestaurants.length,
+      avgRating: avg,
+      reviewCount: totalRevCount,
+      topRestaurant: topRest,
+    };
+  }).sort((a, b) => b.avgRating - a.avgRating || b.restaurantCount - a.restaurantCount);
+
+  // Top menus (most ordered lunch menus)
+  const menuFreq: Record<string, number> = {};
+  reviews.forEach((r) => {
+    const m = r.menu || r.recommendedMenu;
+    if (m && m.trim()) {
+      const clean = m.trim();
+      menuFreq[clean] = (menuFreq[clean] || 0) + 1;
+    }
+  });
+  const topMenus: MenuStat[] = Object.entries(menuFreq)
+    .map(([menu, count]) => ({ menu, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+
+  // Category Champions
+  const CATEGORIES = ["한식", "일식", "중식", "양식", "분식", "카페", "아시안"];
+  const categoryChampions: CategoryChampion[] = [];
+  CATEGORIES.forEach((cat) => {
+    const matches = restaurants
+      .filter((r) => r.categories && r.categories.includes(cat) && r.reviewCount > 0)
+      .sort((a, b) => b.avgRating - a.avgRating || b.reviewCount - a.reviewCount);
+    if (matches.length > 0) {
+      categoryChampions.push({
+        category: cat,
+        restaurant: matches[0],
+      });
+    }
+  });
+
+  // Hidden gems: high rating (>= 4.5) with only 1~2 reviews
+  const hiddenGems = restaurants
+    .filter((r) => r.reviewCount >= 1 && r.reviewCount <= 2 && r.avgRating >= 4.5)
+    .sort((a, b) => b.avgRating - a.avgRating)
+    .slice(0, 5);
+
+  // Dormant restaurants: has reviews, but visited long ago
+  const dormantRestaurants = [...restaurants]
+    .filter((r) => r.reviewCount > 0 && r.reviews.some((rv) => rv.visitDate))
+    .sort((a, b) => {
+      const aLatest = Math.max(
+        ...a.reviews.map((rv) => (rv.visitDate ? new Date(rv.visitDate).getTime() : 0))
+      );
+      const bLatest = Math.max(
+        ...b.reviews.map((rv) => (rv.visitDate ? new Date(rv.visitDate).getTime() : 0))
+      );
+      return aLatest - bLatest; // oldest first
+    })
+    .slice(0, 5);
 
   // Sort top rated with at least 1 review
   const topRestaurants = [...restaurants]
@@ -512,6 +678,16 @@ export async function getStats(): Promise<Stats> {
     topRestaurants,
     recentReviews,
     revisitTopRestaurants,
+    authorDetails,
+    mostGenerousAuthor,
+    strictestAuthor,
+    controversialRestaurants: controversialRestaurants.slice(0, 4),
+    unanimousRestaurants,
+    buildingStats,
+    topMenus,
+    categoryChampions,
+    hiddenGems,
+    dormantRestaurants,
   };
 }
 
