@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { UtensilsCrossed, Calendar, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon, Lightbulb, Flame } from "lucide-react";
+import { UtensilsCrossed, Calendar, Trophy, ScrollText, Plus, PenSquare, RefreshCw, User, Sun, Moon, Lightbulb, Compass } from "lucide-react";
 
 interface NavbarProps {
   activeTab: "list" | "calendar" | "stats" | "patchnotes";
@@ -9,7 +9,7 @@ interface NavbarProps {
   onOpenAddRestaurant: () => void;
   onOpenAddReview: (restaurantId?: string) => void;
   onOpenSuggestion: () => void;
-  onOpenLunchWorldCup: () => void;
+  onOpenLunchRoulette: () => void;
   onRefresh: () => void;
   isRefreshing: boolean;
   currentUser: string;
@@ -26,7 +26,7 @@ export default function Navbar({
   onOpenAddRestaurant,
   onOpenAddReview,
   onOpenSuggestion,
-  onOpenLunchWorldCup,
+  onOpenLunchRoulette,
   onRefresh,
   isRefreshing,
   currentUser,
@@ -186,14 +186,14 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Lunch World Cup (점메추) Button */}
+            {/* Lunch Roulette (점메추) Button */}
             <button
-              onClick={onOpenLunchWorldCup}
-              title="점심 메뉴 추천! 점심 이상형 월드컵"
+              onClick={onOpenLunchRoulette}
+              title="점심 메뉴 추천! 미식 룰렛 돌리기"
               className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-2 text-xs font-black rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-sm shadow-orange-500/25 transition transform active:scale-95 cursor-pointer"
             >
-              <Flame className="w-3.5 h-3.5 text-amber-200 fill-amber-200 animate-pulse" />
-              <span>점메추</span>
+              <Compass className="w-3.5 h-3.5 text-amber-200 animate-spin" style={{ animationDuration: "10s" }} />
+              <span>점메추 룰렛</span>
             </button>
 
             {/* Suggestion / Idea Button */}
