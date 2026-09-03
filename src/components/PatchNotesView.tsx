@@ -18,6 +18,33 @@ interface PatchItem {
 
 const PATCH_HISTORY: PatchItem[] = [
   {
+    version: "v1.6.0",
+    date: "2026년 9월 3일",
+    title: "오늘 점심 천하제일전! '점메추 이상형 월드컵' 공식 출시 🏆",
+    tag: "신규 기능",
+    tagColor: "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+    changes: [
+      {
+        type: "feature",
+        title: "1:1 토너먼트 점심 메뉴 추천 (점메추 월드컵) 시스템",
+        description:
+          "매일 점심 메뉴를 고르기 힘들 때 인턴 동료들과 함께 4강 / 8강 / 16강 1:1 데스매치로 승자를 가려 오늘의 최강 식당을 선정할 수 있습니다. 상단 내비게이션 바의 [🏆 점메추] 버튼이나 메인 배너에서 바로 시작할 수 있습니다.",
+      },
+      {
+        type: "feature",
+        title: "건물 및 카테고리 맞춤 필터링 & 키보드 단축키 지원",
+        description:
+          "누리꿈/사보이/KGIT 등 원하는 특정 건물이나 음식 종류만 골라 토너먼트를 시작할 수 있으며, 마우스 클릭 외에도 키보드 [1 / ←], [2 / →] 키로 빠르고 신나게 선택할 수 있습니다.",
+      },
+      {
+        type: "design",
+        title: "승리/탈락 애니메이션, Web Audio 효과음 및 우승 축포 세레머니",
+        description:
+          "경기 진행 시 생생한 VS 이펙트, 대표 주문 메뉴와 인턴들의 한줄평 말풍선 비교, 선택 시 효과음, 그리고 결승 우승 시 황금빛 트로피와 화면 가득 터지는 폭죽(Confetti) 축포를 감상할 수 있습니다.",
+      },
+    ],
+  },
+  {
     version: "v1.5.2",
     date: "2026년 8월 31일",
     title: "주문 메뉴 이전 주문 기록 기반 콤보박스(Combobox) 지원 🍲",

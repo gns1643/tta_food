@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, Building2, Star, Filter, ArrowUpDown, Plus, PenSquare, UtensilsCrossed, RefreshCw, Loader2, Sparkles, User, Tag } from "lucide-react";
+import { Search, Building2, Star, Filter, ArrowUpDown, Plus, PenSquare, UtensilsCrossed, RefreshCw, Loader2, Sparkles, User, Tag, Flame } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import RestaurantCard from "@/components/RestaurantCard";
 import RestaurantDetailModal from "@/components/RestaurantDetailModal";
@@ -12,6 +12,7 @@ import StatsView from "@/components/StatsView";
 import CalendarView from "@/components/CalendarView";
 import PatchNotesView from "@/components/PatchNotesView";
 import SuggestionModal from "@/components/SuggestionModal";
+import LunchWorldCupModal from "@/components/LunchWorldCupModal";
 import { Restaurant, Review } from "@/types";
 
 const BUILDING_TABS = ["전체", "누리꿈", "사보이", "kgit", "기타"];
@@ -45,6 +46,7 @@ export default function HomePage() {
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
   const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
   const [isSuggestionModalOpen, setIsSuggestionModalOpen] = useState(false);
+  const [isLunchWorldCupOpen, setIsLunchWorldCupOpen] = useState(false);
   const [editingReviewData, setEditingReviewData] = useState<{
     review: Review;
     restaurantName: string;
@@ -257,6 +259,7 @@ export default function HomePage() {
         onOpenAddRestaurant={() => setIsAddRestaurantOpen(true)}
         onOpenAddReview={handleOpenAddReview}
         onOpenSuggestion={() => setIsSuggestionModalOpen(true)}
+        onOpenLunchWorldCup={() => setIsLunchWorldCupOpen(true)}
         onRefresh={() => fetchRestaurants(true)}
         isRefreshing={isRefreshing}
         currentUser={currentUser}
@@ -282,6 +285,35 @@ export default function HomePage() {
           />
         ) : (
           <div className="space-y-6">
+            {/* Quick World Cup Banner */}
+            <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-3xl p-4 sm:p-5 text-white shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center space-x-3.5 text-center sm:text-left">
+                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shrink-0 shadow-inner">
+                  <Flame className="w-6 h-6 text-amber-200 animate-bounce" />
+                </div>
+                <div>
+                  <div className="flex items-center justify-center sm:justify-start space-x-2">
+                    <h3 className="text-base sm:text-lg font-black tracking-tight">
+                      오늘 점심 뭐 먹을지 고민되시나요?
+                    </h3>
+                    <span className="px-2 py-0.5 text-[10px] font-black bg-white/25 text-white rounded-full">
+                      점메추 HOT
+                    </span>
+                  </div>
+                  <p className="text-xs text-orange-100 mt-0.5">
+                    상암 맛집 1:1 토너먼트로 오늘의 최강 점심 메뉴를 1분 만에 결정해보세요!
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsLunchWorldCupOpen(true)}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-white text-orange-600 hover:bg-orange-50 font-black text-xs sm:text-sm shadow-sm transition transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer"
+              >
+                <span>🏆 점심 월드컵 시작하기</span>
+              </button>
+            </div>
+
             {/* Hero / Filter Bar */}
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
               {/* Search Bar */}
@@ -480,6 +512,13 @@ export default function HomePage() {
           setIsSuggestionModalOpen(false);
           showToast(`💡 ${newSug.author}님의 제안이 접수되었습니다! 다음 정기 스케줄러가 자동 개발합니다.`);
         }}
+      />
+
+      <LunchWorldCupModal
+        isOpen={isLunchWorldCupOpen}
+        onClose={() => setIsLunchWorldCupOpen(false)}
+        restaurants={restaurants}
+        onOpenDetail={(r) => setSelectedRestaurantForDetail(r)}
       />
     </div>
   );
